@@ -291,6 +291,13 @@ const resolvers = {
             }
         }
     },
+
+    // relationship
+
+    Category: {
+        parent: async (param, args) => await Category.findOne({ _id: param.parent }),
+        image: async (param, args) => await Multimedia.findOne({ _id: param.image })
+    }
 }
 
 let saveImage = ({ stream, filename }) => {
