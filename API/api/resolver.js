@@ -4,15 +4,19 @@ const { GraphQLError, GraphQLScalarType, Kind } = require('graphql');
 const path = require('path');
 const fs = require('fs');
 const ImageSize = require('image-size');
-const fileTypeFromFile = async buf => {
-    fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
-    return fileTypeFromFile._cached(buf)
-}
 
 const User = require('../app/models/users');
 const Multimedia = require('../app/models/multimedia');
 const Category = require('../app/models/category');
+const Brand = require('../app/models/brand');
+const Survey = require('../app/models/survey');
 
+
+
+const fileTypeFromFile = async buf => {
+    fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
+    return fileTypeFromFile._cached(buf)
+}
 
 const dateScalar = new GraphQLScalarType({
     name: 'Date',
@@ -89,7 +93,6 @@ const resolvers = {
 
         getAllMultimedia: async (param, args, { check, isAdmin }) => {
             if (check && isAdmin) {
-                let errorMessage;
                 try {
                     const page = args.page || 1;
                     const limit = args.limit || 10;
@@ -109,9 +112,9 @@ const resolvers = {
 
                 } catch {
                     const error = new Error('Input Error');
-                    error.data = errorMessage;
+                    error.data = 'امکان نمایش تصاویر  وجود ندارد';
                     error.code = 401;
-                    throw new GraphQLError(errorMessage, {
+                    throw new GraphQLError(error.data, {
                         extensions: { code: error.code },
                     });
                 }
@@ -126,29 +129,107 @@ const resolvers = {
         },
 
         getAllCategory: async (param, args) => {
+            try {
+                if (args.input.mainCategory == true) {
 
-            if (args.input.mainCategory == true) {
+                    const page = args.input.page || 1;
+                    const limit = args.input.limit || 10;
+                    const category = await Category.paginate({ parent: null }, { page, limit });
 
-                const page = args.input.page || 1;
-                const limit = args.input.limit || 10;
-                const category = await Category.paginate({ parent: null }, { page, limit });
+                    return category.docs
 
-                return category.docs
+                } else if (args.input.mainCategory == false, args.input.parentCategory == true) {
 
-            } else if (args.input.mainCategory == false, args.input.parentCategory == true) {
+                    const page = args.input.page || 1;
+                    const limit = args.input.limit || 10;
+                    const category = await Category.paginate({ parent: args.input.catId }, { page, limit });
 
-                const page = args.input.page || 1;
-                const limit = args.input.limit || 10;
-                const category = await Category.paginate({ parent: args.input.catId }, { page, limit });
+                    return category.docs
 
-                return category.docs
+                } else if (args.input.mainCategory == false, args.input.parentCategory == false) {
+                    const page = args.input.page || 1;
+                    const limit = args.input.limit || 10;
+                    const category = await Category.paginate({}, { page, limit });
 
-            } else if (args.input.mainCategory == false, args.input.parentCategory == false) {
-                const page = args.input.page || 1;
-                const limit = args.input.limit || 10;
-                const category = await Category.paginate({}, { page, limit });
+                    return category.docs
+                }
+            } catch {
+                const error = new Error('Input Error');
+                error.data = 'امکان نمایش دسته بندی ها وجود ندارد';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
 
-                return category.docs
+        getAllBrand: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                try {
+                    const page = args.input.page || 1;
+                    const limit = args.input.limit || 10;
+
+                    if (args.input.getAll) {
+                        const brands = await Brand.paginate({}, { page, limit });
+                        return brands.docs;
+
+                    } else if (!args.input.getAll && args.input.category) {
+                        const brands = await Brand.paginate({ category: args.input.category }, { page, limit });
+                        return brands.docs;
+                    } else {
+                        throw error
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = 'امکان نمایش برند ها وجود ندارد';
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllSurvey: async (param, args) => {
+            let errorMessage = 'امکان نمایش معیار امتیاز دهی وجود ندارد'
+            try {
+                const category = await Category.findById(args.categoryId).populate('parent').exec();
+                if (category.parent == null) {
+                    errorMessage = 'برای این دسته بندی هیج معیار امتیاز دهی ثبت نشده است'
+                    throw error;
+                } else if (category.parent.parent == null) {
+                    const list = await Survey.find({ category: args.categoryId })
+                    if (list.length == 0) {
+                        errorMessage = 'برای این دسته بندی هیج معیار امتیاز دهی ثبت نشده است'
+                        throw error;
+                    }
+                    return list
+                } else {
+                    const parentCategory = await Category.findById(category.parent)
+                    const list = await Survey.find({ category: parentCategory._id })
+                    if (list.length == 0) {
+                        errorMessage = 'برای این دسته بندی هیج معیار امتیاز دهی ثبت نشده است'
+                        throw error;
+                    }
+                    return list
+                }
+
+            } catch {
+                const error = new Error('Input Error');
+                error.data = errorMessage;
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
             }
         }
 
@@ -246,7 +327,7 @@ const resolvers = {
 
         category: async (param, args, { check, isAdmin }) => {
             if (check && isAdmin) {
-                let errorMessage;
+                let errorMessage = 'ذخیره دسته یندی امکان پذیر نیست';
                 try {
 
                     if (validator.isEmpty(args.name)) {
@@ -275,9 +356,9 @@ const resolvers = {
 
                 } catch {
                     const error = new Error('Input Error');
-                    error.data = (errorMessage !== "") ? errorMessage : 'ذخیره دسته یندی امکان پذیر نیست';
+                    error.data = errorMessage;
                     error.code = 401;
-                    throw new GraphQLError(errorMessage, {
+                    throw new GraphQLError(error.data, {
                         extensions: { code: error.code },
                     });
                 }
@@ -289,7 +370,102 @@ const resolvers = {
                     extensions: { code: error.code },
                 });
             }
-        }
+        },
+
+        brand: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره برند امکان پذیر نیست'
+                try {
+
+                    // const { createReadStream, filename } = await args.image;
+                    // const stream = createReadStream();
+                    // // const { filePath } = await saveImage({ stream, filename });
+                    // if (validator.isEmpty(filePath)) {
+                    //      errorMessage = 'تصویر را نمی توانید خالی بگذارید' 
+                    // }
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام برند را نمی توانید خالی بگذارید';
+                        throw error;
+                    }
+
+                    if (args.input.category.length == 0) {
+                        errorMessage = 'دسته بندی برند را نمی توانید خالی بگذارید';
+                        throw error;
+                    }
+
+                    await Brand.create({
+                        name: args.input.name,
+                        category: args.input.category,
+                        image: args.input.image
+                    });
+
+                    return {
+                        status: 200,
+                        message: 'برند برای دسته بندی مورد نظر ایجاد شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        survey: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره معیار های امتیاز دهی امکان پذیر نیست'
+                try {
+
+                    for (let index = 0; index < args.input.list.length; index++) {
+                        const element = args.input.list[index];
+
+                        if (!await Category.findOne({ _id: element.category })) {
+                            errorMessage = 'دسته بندی قبلا ثبت نشده است';
+                            throw error
+                        }
+
+                        if (!await Survey.findOne({ name: element.name, category: element.category })) {
+                            await Survey.create({
+                                category: element.category,
+                                name: element.name,
+                            })
+                        }
+                    }
+
+                    return {
+                        status: 200,
+                        message: 'معیاری های امتیاز دهی برای این دسته بندی ذخیره شد.'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
     },
 
     // relationship
@@ -297,6 +473,12 @@ const resolvers = {
     Category: {
         parent: async (param, args) => await Category.findOne({ _id: param.parent }),
         image: async (param, args) => await Multimedia.findOne({ _id: param.image })
+    },
+    Brand: {
+        category: async (param, args) => await Category.find({ _id: param.category })
+    },
+    Survey: {
+        category: async (param, arges) => await Category.findOne({ _id: param.category })
     }
 }
 

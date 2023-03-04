@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
-//const { ApolloServerPluginLandingPageGraphQLPlayground, ApolloServerPluginLandingPageDisabled } = require('apollo-server-core')
 
 const User = require('../app/models/users');
 const typeDefs = require('../api/schema');
@@ -28,13 +27,7 @@ module.exports = class Application {
         const message = err.message || 'error';
 
         return { data, status: code, message }
-      },
-      // plugins: [
-      //   ApolloServerPluginLandingPageGraphQLPlayground({
-      //     // options
-      //   })
-      //   , ApolloServerPluginLandingPageDisabled()
-      // ]
+      }
     });
 
     const { url } = startStandaloneServer(server, {
