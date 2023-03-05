@@ -10,7 +10,8 @@ const Multimedia = require('../app/models/multimedia');
 const Category = require('../app/models/category');
 const Brand = require('../app/models/brand');
 const Survey = require('../app/models/survey');
-
+const ProductSpecs = require('../app/models/productSpecs');
+const ProductSpecsDetails = require('../app/models/productSpecsDetails');
 
 
 const fileTypeFromFile = async buf => {
@@ -231,8 +232,88 @@ const resolvers = {
                     extensions: { code: error.code },
                 });
             }
-        }
+        },
 
+        getAllProductSpecs: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'امکان نمایش مشخصات وجود ندارد'
+                try {
+                    const category = await Category.findById(args.categoryId).populate('parent').exec();
+                    if (category.parent == null) {
+                        errorMessage = 'برای این دسته بندی هیج مشخصاتی ثبت نشده است'
+                        throw error;
+                    } else if (category.parent.parent == null) {
+                        const list = await ProductSpecs.find({ category: args.categoryId })
+                        if (list.length == 0) {
+                            errorMessage = 'برای این دسته بندی هیج مشخصاتی ثبت نشده است'
+                            throw error;
+                        }
+                        return list
+                    } else {
+                        const parentCategory = await Category.findById(category.parent)
+                        const list = await ProductSpecs.find({ category: parentCategory._id })
+                        if (list.length == 0) {
+                            errorMessage = 'برای این دسته بندی هیج مشخصاتی ثبت نشده است'
+                            throw error;
+                        }
+                        return list
+                    }
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllProductSpecsDetails: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'امکان نمایش ریز مشخصات وجود ندارد'
+                try {
+
+                    const productSpecs = await ProductSpecs.findById(args.specsId);
+                    if (!productSpecs) {
+                        errorMessage = 'این مشخصات ثبت نشده است'
+                        throw error;
+                    }
+
+                    const proSpecsDetailsList = await ProductSpecsDetails.find({ specs: args.specsId })
+                    if (proSpecsDetailsList.length == 0) {
+                        errorMessage = 'برای این مورد هیج مشخصاتی ثبت نشده است'
+                        throw error;
+                    }
+
+                    return proSpecsDetailsList
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        }
     },
 
     Mutation: {
@@ -466,6 +547,123 @@ const resolvers = {
                 });
             }
         },
+
+        productSpecs: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره مشخصات امکان پذیر نیست';
+                try {
+
+                    if (validator.isEmpty(args.input.specs)) {
+                        errorMessage = 'نام را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.category)) {
+                        errorMessage = 'دسته بندی را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (!await Category.findOne({ _id: args.input.category })) {
+                        errorMessage = 'دسته بندی قبلا ثبت نشده است';
+                        throw error
+                    }
+
+                    const category = await Category.findOne({ _id: args.input.category }).populate('parent').exec();
+                    if (category.parent.parent !== null) {
+                        errorMessage = 'دسته بندی صحیح نمی باشد';
+                        throw error
+                    }
+
+                    if (await ProductSpecs.findOne({ category: args.input.category, specs: args.input.specs })) {
+                        errorMessage = 'برای این دسته بندی مشخصه ای با این نام قبلا ثبت شده است';
+                        throw error
+                    }
+
+                    const proSpecs = await ProductSpecs.create({
+                        category: args.input.category,
+                        specs: args.input.specs,
+                        label: args.input.label
+                    })
+
+                    return {
+                        _id: proSpecs._id,
+                        status: 200,
+                        message: 'مشخصات دسته بندی مورد نظر ذخیره شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        productSpecsDetails: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره ریز مشخصات امکان پذیر نیست';
+                try {
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.specs)) {
+                        errorMessage = 'مشخصات را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (!await ProductSpecs.findOne({ _id: args.input.specs })) {
+                        errorMessage = 'مشخصات قبلا ثبت نشده است';
+                        throw error
+                    }
+
+                    const category = await Category.findOne({ _id: args.input.category }).populate('parent').exec();
+
+
+                    if (await ProductSpecsDetails.findOne({ specs: args.input.specs, name: args.input.name })) {
+                        errorMessage = 'این مورد قبلا ثبت شده است';
+                        throw error
+                    }
+
+                    const proSpecsDetails = await ProductSpecsDetails.create({
+                        specs: args.input.specs,
+                        name: args.input.name,
+                        label: args.input.label
+                    })
+
+                    return {
+                        _id: proSpecsDetails._id,
+                        status: 200,
+                        message: ' ریز مشخصات مورد نظر ذخیره شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
     },
 
     // relationship
@@ -478,8 +676,9 @@ const resolvers = {
         category: async (param, args) => await Category.find({ _id: param.category })
     },
     Survey: {
-        category: async (param, arges) => await Category.findOne({ _id: param.category })
-    }
+        category: async (param, args) => await Category.findOne({ _id: param.category })
+    },
+
 }
 
 let saveImage = ({ stream, filename }) => {

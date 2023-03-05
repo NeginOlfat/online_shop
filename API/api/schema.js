@@ -9,7 +9,9 @@ const typeDefs = `#graphql
         getAllMultimedia (page: Int, limit: Int): [Multimedia],
         getAllCategory (input: InputGetCategory): [Category],
         getAllBrand (input: InputGetBrand): [Brand!]!,
-        getAllSurvey (categoryId: ID!): [Survey!]!
+        getAllSurvey (categoryId: ID!): [Survey!]!,
+        getAllProductSpecs (categoryId: ID!): [Specs!]!,
+        getAllProductSpecsDetails (specsId: ID!): [SpecsDetails!]!
     }
     
     type Mutation {
@@ -17,7 +19,10 @@ const typeDefs = `#graphql
         multimedia (image: Upload!): operation!,
         category (name: String!, parent: ID, image: ID): operation!,
         brand (input: InputBrand): operation!,
-        survey (input: InputSurvey): operation!
+        survey (input: InputSurvey): operation!,
+        productSpecs (input: InputProductSpecs): operation!,
+        productSpecsDetails (input: InputProductSpecsDetails): operation!,
+        
     }
 
     input InputBrand {
@@ -35,6 +40,20 @@ const typeDefs = `#graphql
         category: ID!
     }
 
+    input InputProductSpecs {
+        category: ID!,
+        specs: String!,
+        label: String
+    }
+
+    input InputProductSpecsDetails {
+        specs: ID!,
+        name: String!,
+        label: String
+    }
+
+
+
     input InputGetCategory {
         page: Int,
         limit: Int,
@@ -51,6 +70,7 @@ const typeDefs = `#graphql
     }
 
     type operation {
+        _id: ID,
         status: Int,
         message: String,
         token: String
@@ -90,6 +110,21 @@ const typeDefs = `#graphql
         _id: ID,
         name: String,
         category: Category,
+    }
+
+    type Specs {
+        _id: ID,
+        specs: String,
+        category: Category,
+        label: String
+    }
+
+    type SpecsDetails {
+        _id: ID,
+        specs: Specs,
+        name: String,
+        label: String
+
     }
 
 `;
