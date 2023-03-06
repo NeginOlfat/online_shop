@@ -12,6 +12,8 @@ const Brand = require('../app/models/brand');
 const Survey = require('../app/models/survey');
 const ProductSpecs = require('../app/models/productSpecs');
 const ProductSpecsDetails = require('../app/models/productSpecsDetails');
+const Seller = require('../app/models/seller');
+const Slider = require('../app/models/slider');
 
 
 const fileTypeFromFile = async buf => {
@@ -313,7 +315,79 @@ const resolvers = {
                     extensions: { code: error.code },
                 });
             }
-        }
+        },
+
+        getAllSeller: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'امکان نمایش فروشنده ها وجود ندارد'
+                try {
+                    const category = await Category.findOne({ _id: args.categoryId }).populate('parent').exec();
+                    if (!category) {
+                        errorMessage = 'دسته بندی قبلا ثبت نشده است';
+                        throw error
+                    }
+                    if (category.parent !== null) {
+                        errorMessage = 'دسته بندی صحیح نمی باشد';
+                        throw error
+                    }
+
+                    const sellerList = await Seller.find({ category: args.categoryId })
+                    if (sellerList.length == 0) {
+                        errorMessage = 'برای این دسته بندی هیج فروشنده ای ثبت نشده است'
+                        throw error;
+                    }
+
+                    return sellerList;
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllSlider: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'امکان نمایش اسلایدر ها وجود ندارد';
+                try {
+                    const sliders = await Slider.find({});
+                    if (sliders.length == 0) {
+                        errorMessage = 'اسلایدری در سیستم ثبت نشده است';
+                        throw error;
+                    }
+
+                    return sliders;
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
     },
 
     Mutation: {
@@ -627,9 +701,6 @@ const resolvers = {
                         throw error
                     }
 
-                    const category = await Category.findOne({ _id: args.input.category }).populate('parent').exec();
-
-
                     if (await ProductSpecsDetails.findOne({ specs: args.input.specs, name: args.input.name })) {
                         errorMessage = 'این مورد قبلا ثبت شده است';
                         throw error
@@ -664,6 +735,125 @@ const resolvers = {
                 });
             }
         },
+
+        seller: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره فروشنده امکان پذیر نیست';
+                try {
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام فروشنده را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.category)) {
+                        errorMessage = ' دسته بندی را وارد نمایید'
+                        throw error;
+                    }
+
+                    const category = await Category.findOne({ _id: args.input.category }).populate('parent').exec();
+                    if (!category) {
+                        errorMessage = 'دسته بندی قبلا ثبت نشده است';
+                        throw error
+                    }
+                    if (category.parent !== null) {
+                        errorMessage = 'دسته بندی صحیح نمی باشد';
+                        throw error
+                    }
+
+                    if (await Seller.findOne({ category: args.input.category, name: args.input.name })) {
+                        errorMessage = 'این فروشنده قبلا ثبت شده است';
+                        throw error
+                    }
+
+                    const seller = await Seller.create({
+                        category: args.input.category,
+                        name: args.input.name,
+                        label: args.input.label
+                    });
+
+                    return {
+                        _id: seller._id,
+                        status: 200,
+                        message: 'فروشنده به درستی ذخیره شد '
+                    }
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        slider: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره اسلایدر امکان پذیر نیست';
+                try {
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام اسلایدر را وارد نمایید'
+                        throw error;
+                    }
+                    if (args.input.images.length == 0) {
+                        errorMessage = ' تصاویر را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (args.input.default) {
+                        const defaultSlider = await Slider.findOne({ default: true });
+                        if (defaultSlider) {
+                            errorMessage = 'اسلایدر پیش فرض قبلا انتخاب شده است'
+                            throw error;
+                        }
+                    }
+
+                    const duplicatedSlider = await Slider.findOne({ name: args.input.name })
+                    if (duplicatedSlider) {
+                        errorMessage = 'اسلایدر با این نام قبلا ذخیره  شده است '
+                        throw error;
+                    }
+
+                    const slider = await Slider.create({
+                        name: args.input.name,
+                        images: args.input.images,
+                        default: args.input.default
+                    });
+
+                    return {
+                        _id: slider._id,
+                        status: 200,
+                        message: 'اسلایدر ذخیره شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+
+
     },
 
     // relationship
@@ -678,6 +868,9 @@ const resolvers = {
     Survey: {
         category: async (param, args) => await Category.findOne({ _id: param.category })
     },
+    Slider: {
+        image: async (param, args) => await Multimedia.find({ _id: param.images })
+    }
 
 }
 

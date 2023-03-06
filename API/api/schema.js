@@ -11,7 +11,9 @@ const typeDefs = `#graphql
         getAllBrand (input: InputGetBrand): [Brand!]!,
         getAllSurvey (categoryId: ID!): [Survey!]!,
         getAllProductSpecs (categoryId: ID!): [Specs!]!,
-        getAllProductSpecsDetails (specsId: ID!): [SpecsDetails!]!
+        getAllProductSpecsDetails (specsId: ID!): [SpecsDetails!]!,
+        getAllSeller (categoryId: ID!): [Seller!]!,
+        getAllSlider : [Slider!]!,
     }
     
     type Mutation {
@@ -22,7 +24,8 @@ const typeDefs = `#graphql
         survey (input: InputSurvey): operation!,
         productSpecs (input: InputProductSpecs): operation!,
         productSpecsDetails (input: InputProductSpecsDetails): operation!,
-        
+        seller (input: InputSeller): operation!,
+        slider (input: InputSlider): operation!,
     }
 
     input InputBrand {
@@ -50,6 +53,18 @@ const typeDefs = `#graphql
         specs: ID!,
         name: String!,
         label: String
+    }
+
+    input InputSeller {
+        category: ID!,
+        name: String!,
+        label: String
+    }
+
+    input InputSlider {
+        name: String!,
+        images: [ID!]!,
+        default: Boolean = false
     }
 
 
@@ -124,7 +139,20 @@ const typeDefs = `#graphql
         specs: Specs,
         name: String,
         label: String
+    }
 
+    type Seller {
+        _id: ID,
+        name: String,
+        category: Category,
+        label: String
+    }
+
+    type Slider {
+        _id: ID,
+        name: String,
+        image: [Multimedia],
+        default: Boolean
     }
 
 `;
