@@ -14,6 +14,9 @@ const ProductSpecs = require('../app/models/productSpecs');
 const ProductSpecsDetails = require('../app/models/productSpecsDetails');
 const Seller = require('../app/models/seller');
 const Slider = require('../app/models/slider');
+const Product = require('../app/models/product');
+const ProductAttribute = require('../app/models/productAttribute');
+const ProductDetails = require('../app/models/productDetails');
 
 
 const fileTypeFromFile = async buf => {
@@ -382,6 +385,109 @@ const resolvers = {
                 console.log(args.input)
                 const error = new Error('Input Error');
                 error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getProductInfo: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'دسترسی به اطلاعات امکان پذیر نیست';
+                try {
+
+                    if (!args.input.isSubCategory && validator.isEmpty(args.input.categoryId)) {
+                        errorMessage = 'دسته اصلی را انتخاب نمایید';
+                        throw error
+                    } else if (args.input.isSubCategory && validator.isEmpty(args.input.subCategoryId)) {
+                        errorMessage = 'زیر دسته را انتخاب نمایید';
+                        throw error
+                    }
+
+                    if (!args.input.isSubCategory) {
+                        const category = await Category.findById(args.input.categoryId);
+                        if (!category || category.parent != null) {
+                            errorMessage = 'درسته اصلی معتبر نمی باشد'
+                            throw error;
+                        }
+
+                        const sellers = await Seller.find({ category: args.input.categoryId });
+                        if (!sellers) {
+                            errorMessage = 'هیچ فروشنده ای برای این دسته بندی ثبت نشده است'
+                            throw error;
+                        }
+
+                        return {
+                            sellers
+                        }
+
+                    } else if (args.input.isSubCategory) {
+                        const category = await Category.findById(args.input.subCategoryId).populate('parent').exec();
+                        if (!category || category.parent.parent != null) {
+                            errorMessage = ' زیر درسته معتبر نمی باشد'
+                            throw error;
+                        }
+
+                        const brands = await Brand.find({ category: args.input.subCategoryId });
+                        const subCategory = await Category.find({ parent: args.input.subCategoryId });
+                        const specs = await ProductSpecs.find({ category: args.input.subCategoryId });
+
+                        return {
+                            brands,
+                            subCategory,
+                            specs
+                        }
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllProduct: async (param, args) => {
+            let errorMessage = 'دسترسی به اطلاعات امکان پذیر نمی باشد'
+
+            const page = args.page || 1;
+            const limit = args.limit || 10;
+
+            try {
+                if (args.productId) {
+                    const product = await Product.findById(args.productId);
+                    if (!product) {
+                        errorMessage = 'چنین محصولی در سیستم ثبت نشده است'
+                        throw error
+                    }
+
+                    return [product];
+
+                } else if (!args.productId) {
+                    const product = await Product.paginate({}, { page, limit });
+                    if (product.length == 0) {
+                        errorMessage = 'محصولی برای نمایش وجود ندارد'
+                        throw error
+                    }
+
+                    return product.docs;
+                }
+
+            } catch {
+                const error = new Error('Input Error');
+                error.data = errorMessage;
                 error.code = 401;
                 throw new GraphQLError(error.data, {
                     extensions: { code: error.code },
@@ -852,11 +958,108 @@ const resolvers = {
             }
         },
 
+        product: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره محصول امکان پذیر نیست';
+                let attributes = [];
+                let details = [];
+                try {
+                    const product = await Product.findOne({ $or: [{ persianName: args.input.persianName }, { englishName: args.input.englishName }] })
+                    if (product) {
+                        errorMessage = 'محصولی با عنوان مشابه قبلا ذخیره شده است'
+                        throw error;
+                    }
 
+                    if (validator.isEmpty(args.input.persianName)) {
+                        errorMessage = 'نام  فارسی را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.englishName)) {
+                        errorMessage = 'نام  انگلیسی را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.category)) {
+                        errorMessage = ' دسته بندی  را وارد نمایید'
+                        throw error;
+                    }
+                    if (validator.isEmpty(args.input.brand)) {
+                        errorMessage = ' برند را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (args.input.attribute.length == 0) {
+                        errorMessage = 'ویژگی های محصول را وارد نمایید'
+                        throw error;
+                    }
+                    if (args.input.details.length == 0) {
+                        errorMessage = ' مشخصات محصول را وارد نمایید'
+                        throw error;
+                    }
+
+                    const category = await Category.findById(args.input.category);
+                    const brand = await Brand.findById(args.input.brand);
+
+                    if (!category || category.parent == null) {
+                        errorMessage = 'دسته بندی مورد نظر صحیح نمی باشد'
+                        throw error;
+                    }
+                    if (!brand) {
+                        errorMessage = ' برند مورد نظر صحیح نمی باشد'
+                        throw error;
+                    }
+
+
+                    attributes = await saveProductAttribute(args.input.attribute);
+                    details = await saveDetailsValue(args.input.details);
+
+                    if (attributes.length == 0 || details.length == 0)
+                        throw error
+
+                    // const { createReadStream, filename } = await args.input.original;
+                    // const stream = createReadStream();
+                    // const { filePath } = await saveImage({ stream, filename });
+
+                    await Product.create({
+                        persianName: args.input.persianName,
+                        englishName: args.input.englishName,
+                        category: args.input.category,
+                        brand: args.input.brand,
+                        attribute: attributes,
+                        details: details,
+                        description: args.input.description,
+                        original: args.input.original
+                    });
+
+                    return {
+                        status: 200,
+                        message: 'محصول مورد نظر ذخیره شد'
+                    }
+
+                } catch {
+
+                    await deleteProductAttribute(attributes);
+                    await deleteDetailsValue(attributes);
+
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
 
     },
 
-    // relationship
+    // relationship of Types 
 
     Category: {
         parent: async (param, args) => await Category.findOne({ _id: param.parent }),
@@ -870,6 +1073,25 @@ const resolvers = {
     },
     Slider: {
         image: async (param, args) => await Multimedia.find({ _id: param.images })
+    },
+    Specs: {
+        details: async (param, args) => await ProductSpecsDetails.find({ specs: param._id })
+    },
+    Product: {
+        category: async (param, args) => await Category.findById(param.category),
+        brand: async (param, args) => await Brand.findById(param.brand),
+        images: async (param, args) => await Multimedia.find({ _id: param.images }),
+        attribute: async (param, args) => await ProductAttribute.find({ _id: param.attribute }),
+        details: async (param, args) => await ProductDetails.find({ _id: param.details }),
+    },
+    Attribute: {
+        seller: async (param, args) => await Seller.findById(param.seller),
+    },
+    Details: {
+        productSpecsDetails: async (param, args) => await ProductSpecsDetails.findById(param.productSpecsDetails),
+    },
+    SpecsDetails: {
+        specs: async (param, args) => await ProductSpecs.findById(param.specs)
     }
 
 }
@@ -893,5 +1115,95 @@ let saveImage = ({ stream, filename }) => {
     })
 }
 
+let saveProductAttribute = async (attributes) => {
+    try {
+        let errorMessage = 'ذخیره ویژگی محصول امکان پذیر نیست'
+        const attributeList = [];
+
+        for (let index = 0; index < attributes.length; index++) {
+            const element = attributes[index]
+            const seller = await Seller.findById(element.seller)
+
+            if (!seller) {
+                errorMessage = ' فروشنده مورد نظر صحیح نمی باشد'
+                throw error;
+            }
+
+            const productAttribute = await ProductAttribute.create({
+                seller: seller,
+                color: element.color,
+                stock: element.stock,
+                price: element.price,
+                discount: element.discount
+            })
+
+            attributeList[index] = productAttribute._id
+        }
+
+        return attributeList;
+
+    } catch {
+        const error = new Error('Input Error');
+        error.data = errorMessage;
+        error.code = 401;
+        throw new GraphQLError(error.data, {
+            extensions: { code: error.code },
+        });
+    }
+}
+
+let saveDetailsValue = async (details) => {
+    try {
+        let errorMessage = 'ذخیره مشخصات محصول امکان پذیر نیست'
+        const detailsList = [];
+
+        for (let index = 0; index < details.length; index++) {
+            const element = details[index]
+            const productSpecsDetails = await ProductSpecsDetails.findById(element.productSpecsDetails)
+
+            if (!productSpecsDetails) {
+                errorMessage = 'چنین مشخصاتی در سیستم ثبت نشده است'
+                throw error;
+            }
+
+            if (element.value.length == 0) {
+                element.value = 'ندارد'
+            }
+
+            const productAttribute = await ProductDetails.create({
+                productSpecsDetails: productSpecsDetails,
+                value: element.value
+            })
+
+            detailsList[index] = productAttribute._id
+        }
+
+        return detailsList;
+
+    } catch {
+        const error = new Error('Input Error');
+        error.data = errorMessage;
+        error.code = 401;
+        throw new GraphQLError(error.data, {
+            extensions: { code: error.code },
+        });
+    }
+}
+
+let deleteProductAttribute = async (attributes) => {
+    for (let index = 0; index < attributes.length; index++) {
+        const element = attributes[index];
+        await ProductAttribute.deleteOne({ _id: element });
+    }
+    return;
+}
+
+let deleteDetailsValue = async (details) => {
+    for (let index = 0; index < details.length; index++) {
+        const element = details[index];
+        await ProductDetails.deleteOne({ _id: element });
+    }
+    return;
+}
 
 module.exports = resolvers;

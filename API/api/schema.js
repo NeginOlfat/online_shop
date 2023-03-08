@@ -13,7 +13,9 @@ const typeDefs = `#graphql
         getAllProductSpecs (categoryId: ID!): [Specs!]!,
         getAllProductSpecsDetails (specsId: ID!): [SpecsDetails!]!,
         getAllSeller (categoryId: ID!): [Seller!]!,
-        getAllSlider : [Slider!]!,
+        getAllSlider: [Slider!]!,
+        getProductInfo (input: InputGetProductInfo): ProductInfo!,
+        getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
     }
     
     type Mutation {
@@ -26,6 +28,7 @@ const typeDefs = `#graphql
         productSpecsDetails (input: InputProductSpecsDetails): operation!,
         seller (input: InputSeller): operation!,
         slider (input: InputSlider): operation!,
+        product (input: InputProduct): operation!,
     }
 
     input InputBrand {
@@ -67,6 +70,29 @@ const typeDefs = `#graphql
         default: Boolean = false
     }
 
+    input InputProduct {
+        persianName: String!,
+        englishName: String!,
+        category: ID!,
+        brand: ID!,
+        attribute: [InputAttribute!]!,
+        details: [InputDetails!]!,
+        description: String,
+        original: Upload
+    }
+
+    input InputAttribute {
+        seller: ID!,
+        color: String!,
+        stock: Int!,
+        price: Int!,
+        discount: Int = 0,
+    }
+
+    input InputDetails {
+        productSpecsDetails: ID!,
+        value: String
+    }
 
 
     input InputGetCategory {
@@ -82,6 +108,12 @@ const typeDefs = `#graphql
         limit: Int,
         category: ID,
         getAll: Boolean = true
+    }
+
+    input InputGetProductInfo {
+        categoryId: ID,
+        subCategoryId: ID,
+        isSubCategory: Boolean = false
     }
 
     type operation {
@@ -131,7 +163,8 @@ const typeDefs = `#graphql
         _id: ID,
         specs: String,
         category: Category,
-        label: String
+        label: String,
+        details: [SpecsDetails]
     }
 
     type SpecsDetails {
@@ -154,6 +187,40 @@ const typeDefs = `#graphql
         image: [Multimedia],
         default: Boolean
     }
+
+    type ProductInfo {
+        sellers: [Seller],
+        brands: [Brand],
+        subCategory: [Category],
+        specs: [Specs], 
+    }
+
+    type Product {
+        _id: ID,
+        persianName: String!,
+        englishName: String!,
+        category: Category,
+        brand: Brand,
+        description: String,
+        original: String,
+        images: [Multimedia],
+        attribute: [Attribute],
+        details: [Details],
+    }
+
+    type Attribute {
+        seller: Seller,
+        color: String,
+        stock: Int,
+        price: Int,
+        discount: Int,
+    }
+
+    type Details {
+        productSpecsDetails: SpecsDetails,
+        value: String
+    }
+    
 
 `;
 
