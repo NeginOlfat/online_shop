@@ -1237,6 +1237,69 @@ const resolvers = {
                 });
             }
         },
+
+        updateSlider: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ویرایش اسلایدر امکان پذیر نیست';
+                try {
+
+                    const slider = await Slider.findById(args.input.sliderId);
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام اسلایدر را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (args.input.images.length == 0) {
+                        errorMessage = ' تصاویر را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (slider == null) {
+                        errorMessage = 'اسلایدر مورد نظر در سیستم ثبت نشده است'
+                        throw error;
+                    }
+
+                    if (slider.default && !args.input.default) {
+                        errorMessage = 'یک اسلایدر باید در حالت پیش فرض باشد'
+                        throw error;
+                    }
+
+
+                    if (!slider.default && args.input.default) {
+                        await Slider.findOneAndUpdate({ default: true }, { $set: { default: false } });
+                    }
+
+                    slider.set({
+                        name: args.input.name,
+                        images: args.input.images,
+                        default: args.input.default
+                    });
+
+                    await slider.save();
+
+                    return {
+                        status: 200,
+                        message: 'اسلایدر مورد نظر ویرایش شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
     },
 
     // relationship of Types 

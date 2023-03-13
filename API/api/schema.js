@@ -33,7 +33,7 @@ const typeDefs = `#graphql
         updateProductAttribute (input: InputUpdateProductAttribute): operation!,
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
         updateProduct (input: InputUpdateProduct): operation!,
-
+        updateSlider (input: InputUpdateSlider): operation!
     }
 
     input InputBrand {
@@ -119,6 +119,13 @@ const typeDefs = `#graphql
     input InputUpdateDetails {
          _id: ID!,
          value: String
+    }
+
+    input InputUpdateSlider {
+        sliderId: ID,
+        name: String,
+        images: [ID],
+        default: Boolean
     }
 
 
