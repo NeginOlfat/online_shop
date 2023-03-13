@@ -29,6 +29,11 @@ const typeDefs = `#graphql
         seller (input: InputSeller): operation!,
         slider (input: InputSlider): operation!,
         product (input: InputProduct): operation!,
+
+        updateProductAttribute (input: InputUpdateProductAttribute): operation!,
+        updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
+        updateProduct (input: InputUpdateProduct): operation!,
+
     }
 
     input InputBrand {
@@ -92,6 +97,28 @@ const typeDefs = `#graphql
     input InputDetails {
         productSpecsDetails: ID!,
         value: String
+    }
+
+    input InputUpdateProductAttribute {
+        isAddSeller: Boolean = false,
+        productId: ID,
+        attributeId: ID,
+        attribute: [InputAttribute!]!
+    }
+
+    input InputUpdateProduct {
+        _id: ID!,
+        persianName: String!,
+        englishName: String!,
+        brand: ID!,
+        details: [InputUpdateDetails!]!,
+        description: String,
+        original: Upload
+    }
+    
+    input InputUpdateDetails {
+         _id: ID!,
+         value: String
     }
 
 
