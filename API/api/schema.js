@@ -29,6 +29,7 @@ const typeDefs = `#graphql
         seller (input: InputSeller): operation!,
         slider (input: InputSlider): operation!,
         product (input: InputProduct): operation!,
+        orderStatus (input: InputOrderStatus): operation!,
 
         updateProductAttribute (input: InputUpdateProductAttribute): operation!,
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
@@ -98,6 +99,13 @@ const typeDefs = `#graphql
         productSpecsDetails: ID!,
         value: String
     }
+
+    input InputOrderStatus {
+        name: String!,
+        image: Upload,
+        default: Boolean = false,
+    }
+
 
     input InputUpdateProductAttribute {
         isAddSeller: Boolean = false,

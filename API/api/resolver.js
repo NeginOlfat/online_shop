@@ -17,7 +17,7 @@ const Slider = require('../app/models/slider');
 const Product = require('../app/models/product');
 const ProductAttribute = require('../app/models/productAttribute');
 const ProductDetails = require('../app/models/productDetails');
-
+const OrderStatus = require('../app/models/orderStatus');
 
 const fileTypeFromFile = async buf => {
     fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
@@ -1281,6 +1281,62 @@ const resolvers = {
                     return {
                         status: 200,
                         message: 'اسلایدر مورد نظر ویرایش شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        orderStatus: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ذخیره وضعیت سفارش امکان پذیر نمی باشد';
+                try {
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'عنوان وضعیت سفارش را وارد نمایید';
+                        throw error
+                    }
+
+                    const orderstatus = await OrderStatus.findOne({ name: args.input.name })
+                    if (orderstatus) {
+                        errorMessage = 'وضعیت سفارشی با این نام قبلا ذخیره شده است';
+                        throw error
+                    }
+
+                    if (args.input.default) {
+                        const orderstatus = await OrderStatus.findOne({ default: args.input.default })
+                        if (orderstatus) {
+                            errorMessage = 'قبلا وضعیت سفارش پیش فرض انتخاب شده است';
+                            throw error
+                        }
+                    }
+
+                    const { createReadStream, filename } = await args.image;
+                    const stream = createReadStream();
+                    const { filePath } = await saveImage({ stream, filename });
+
+                    await OrderStatus.create({
+                        name: args.input.name,
+                        image: filePath,
+                        default: args.input.default
+                    });
+
+                    return {
+                        status: 200,
+                        message: 'وضعیت سفارش ذخیره شد'
                     }
 
                 } catch {
