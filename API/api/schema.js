@@ -16,6 +16,7 @@ const typeDefs = `#graphql
         getAllSlider: [Slider!]!,
         getProductInfo (input: InputGetProductInfo): ProductInfo!,
         getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
+        getAllComment (input: InputGetComment): [Comment]
     }
     
     type Mutation {
@@ -30,6 +31,9 @@ const typeDefs = `#graphql
         slider (input: InputSlider): operation!,
         product (input: InputProduct): operation!,
         orderStatus (input: InputOrderStatus): operation!,
+        comment (input: InputComment): operation!,
+        addLike (commentId: ID!): operation!,
+        addDisLike (commentId: ID!): operation!,
 
         updateProductAttribute (input: InputUpdateProductAttribute): operation!,
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
@@ -106,6 +110,17 @@ const typeDefs = `#graphql
         default: Boolean = false,
     }
 
+    input InputComment {
+        product: ID!,
+        survey: [InputSurveyValue!]!,
+        text: String!,
+    }
+
+    input InputSurveyValue {
+        survey: ID!,
+        value: Float = 3,
+    }
+
 
     input InputUpdateProductAttribute {
         isAddSeller: Boolean = false,
@@ -157,6 +172,14 @@ const typeDefs = `#graphql
         subCategoryId: ID,
         isSubCategory: Boolean = false
     }
+
+    input InputGetComment {
+        page: Int,
+        limit: Int,
+        productId: ID,
+        commentId: ID
+    }
+
 
     type operation {
         _id: ID,
@@ -261,6 +284,26 @@ const typeDefs = `#graphql
     type Details {
         productSpecsDetails: SpecsDetails,
         value: String
+    }
+
+    type Comment {
+        _id: ID,
+        user: User,
+        product: ID,
+        survey: [SurveyValue],
+        text: String,
+        like: [User],
+        disLike: [User],
+        createdAt: Date
+    }
+
+    type SurveyValue {
+        survey: Survey,
+        value: Float
+    }
+
+    type User {
+        _id: ID
     }
     
 

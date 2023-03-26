@@ -18,6 +18,8 @@ const Product = require('../app/models/product');
 const ProductAttribute = require('../app/models/productAttribute');
 const ProductDetails = require('../app/models/productDetails');
 const OrderStatus = require('../app/models/orderStatus');
+const Comment = require('../app/models/comment');
+const SurveyValues = require('../app/models/surveyValues');
 
 const fileTypeFromFile = async buf => {
     fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
@@ -483,6 +485,41 @@ const resolvers = {
                     }
 
                     return product.docs;
+                }
+
+            } catch {
+                const error = new Error('Input Error');
+                error.data = errorMessage;
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllComment: async (param, args) => {
+            try {
+                let errorMessage = 'دسترسی به اطلاعات امکان پذیر نمی باشد'
+                const page = args.page || 1;
+                const limit = args.limit || 10;
+
+                if (!args.input.productId && !args.input.commentId) {
+                    const comments = await Comment.paginate({}, { page, limit });
+                    return comments.docs;
+
+                } else if (args.input.productId) {
+                    const product = await Product.findById(args.input.productId);
+                    if (!product) {
+                        errorMessage = 'چنین محصولی در سیستم ثبت نشده است'
+                        throw error;
+                    }
+
+                    const comments = await Comment.paginate({ product: args.input.productId }, { page, limit });
+                    return comments.docs;
+
+                } else if (!args.input.productId && args.input.commentId) {
+                    const comment = await Comment.findById(args.input.commentId);
+                    return [comment]
                 }
 
             } catch {
@@ -1356,6 +1393,190 @@ const resolvers = {
                 });
             }
         },
+
+        comment: async (param, args, { check }) => {
+            if (check) {
+                let errorMessage = 'ذخیره کامنت امکان پذیر نمی باشد';
+
+                try {
+
+                    const product = await Product.findById(args.input.product);
+                    if (!product) {
+                        errorMessage = 'چنین محصولی در سیستم ثبت نشده است';
+                        throw error;
+                    }
+
+                    if (validator.isEmpty(args.input.text)) {
+                        errorMessage = 'کامنت را وارد نمایید';
+                        throw error;
+                    }
+
+                    const surveyValues = await saveSurveyValues(args.input.survey);
+
+                    await Comment.create({
+                        user: check.id,
+                        product: args.input.product,
+                        survey: surveyValues,
+                        text: args.input.text
+                    });
+
+                    return {
+                        status: 200,
+                        message: 'کامنت درج شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        addLike: async (param, args, { check }) => {
+            if (check) {
+                let errorMessage = 'لایک کردن کامنت امکان پذیر نمی باشد';
+                let hasLike = false;
+                try {
+                    const comment = await Comment.findById(args.commentId);
+
+                    if (comment.disLike.length != 0) {
+                        comment.disLike.map(item => {
+                            if (item == check.id) {
+                                const index = comment.disLike.indexOf(check.id)
+                                if (index > -1) {
+                                    comment.disLike.splice(index, 1);
+                                }
+                            }
+                        })
+                    }
+
+                    comment.like.map(item => {
+                        if (item == check.id) {
+                            hasLike = true
+                        }
+                    });
+
+
+                    if (hasLike) {
+                        const index = comment.like.indexOf(check.id);
+
+                        if (index > -1) {
+                            comment.like.splice(index, 1);
+                        }
+                        await comment.save();
+
+                        return {
+                            status: 200,
+                            message: 'عملیات انحام شد!'
+                        }
+
+                    } else {
+                        comment.like.push(check.id);
+                        await comment.save();
+
+                        return {
+                            status: 200,
+                            message: 'لایک شد'
+                        }
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        addDisLike: async (param, args, { check }) => {
+            if (check) {
+                let errorMessage = 'دیس لایک کردن کامنت امکان پذیر نمی باشد';
+                let hasDisLike = false;
+                try {
+                    const comment = await Comment.findById(args.commentId);
+
+                    if (comment.like.length != 0) {
+                        comment.like.map(item => {
+                            if (item == check.id) {
+                                const index = comment.like.indexOf(check.id);
+                                if (index > -1) {
+                                    comment.like.splice(index, 1);
+                                }
+                            }
+                        })
+                    }
+
+                    comment.disLike.map(item => {
+                        if (item == check.id) {
+                            hasDisLike = true
+                        }
+                    });
+
+
+                    if (hasDisLike) {
+                        const index = comment.disLike.indexOf(check.id);
+
+                        if (index > -1) {
+                            comment.disLike.splice(index, 1);
+                        }
+                        await comment.save();
+
+                        return {
+                            status: 200,
+                            message: 'عملیات انحام شد!'
+                        }
+
+                    } else {
+                        comment.disLike.push(check.id);
+                        await comment.save();
+
+                        return {
+                            status: 200,
+                            message: 'دیس لایک شد'
+                        }
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+
+
     },
 
     // relationship of Types 
@@ -1391,7 +1612,13 @@ const resolvers = {
     },
     SpecsDetails: {
         specs: async (param, args) => await ProductSpecs.findById(param.specs)
-    }
+    },
+    Comment: {
+        survey: async (param, args) => await SurveyValues.find({ _id: param.survey })
+    },
+    SurveyValue: {
+        survey: async (param, args) => await Survey.findById(param.survey)
+    },
 
 }
 
@@ -1537,6 +1764,33 @@ let updateDetailsValue = async (details) => {
     } catch {
         const error = new Error('Input Error');
         error.data = errorMessage;
+        error.code = 401;
+        throw new GraphQLError(error.data, {
+            extensions: { code: error.code },
+        });
+    }
+}
+
+let saveSurveyValues = async (survey) => {
+    try {
+        let surveyValueList = [];
+
+        for (let index = 0; index < survey.length; index++) {
+            const element = survey[index];
+
+            const surveyValue = await SurveyValues.create({
+                survey: element.survey,
+                value: element.value
+            });
+
+            surveyValueList[index] = surveyValue._id;
+        }
+
+        return surveyValueList;
+
+    } catch {
+        const error = new Error('Input Error');
+        error.data = 'امکان ذخیره معیار امتیازدهی برای کامنت وجود ندارد';
         error.code = 401;
         throw new GraphQLError(error.data, {
             extensions: { code: error.code },
