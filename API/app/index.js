@@ -36,13 +36,18 @@ module.exports = class Application {
       context: async ({ req }) => {
         const secretId = config.secretId;
         const check = await User.CheckToken(req, secretId);
-        let isAdmin = false
+        let isAdmin = false;
+        let info;
+
         if (check) {
           isAdmin = await User.findById(check.id);
+          info = await User.CheckUserInfo(isAdmin)
         }
+
         return {
           isAdmin: isAdmin,
           secretId,
+          info,
           check
         }
       },

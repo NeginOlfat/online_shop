@@ -16,7 +16,8 @@ const typeDefs = `#graphql
         getAllSlider: [Slider!]!,
         getProductInfo (input: InputGetProductInfo): ProductInfo!,
         getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
-        getAllComment (input: InputGetComment): [Comment]
+        getAllComment (input: InputGetComment): [Comment],
+        getUsers (userId: ID): [User],
     }
     
     type Mutation {
@@ -34,6 +35,8 @@ const typeDefs = `#graphql
         comment (input: InputComment): operation!,
         addLike (commentId: ID!): operation!,
         addDisLike (commentId: ID!): operation!,
+        favorite (productId: ID!): operation!,
+        payment (input: InputPayment): operation!
 
         updateProductAttribute (input: InputUpdateProductAttribute): operation!,
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
@@ -119,6 +122,17 @@ const typeDefs = `#graphql
     input InputSurveyValue {
         survey: ID!,
         value: Float = 3,
+    }
+
+    input InputPayment {
+        products: [InputProductPayment!]!,
+        count: Int = 1,
+        discount: Int  = 0
+    }
+
+    input InputProductPayment {
+        product: ID!,
+        attribute: ID!
     }
 
 
@@ -303,7 +317,15 @@ const typeDefs = `#graphql
     }
 
     type User {
-        _id: ID
+        _id: ID,
+        phone: String,
+        favorite: [Favorite],
+        comment: [Comment]
+    }
+
+    type Favorite {
+        user: User,
+        product: Product
     }
     
 

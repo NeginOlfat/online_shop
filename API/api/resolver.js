@@ -20,6 +20,8 @@ const ProductDetails = require('../app/models/productDetails');
 const OrderStatus = require('../app/models/orderStatus');
 const Comment = require('../app/models/comment');
 const SurveyValues = require('../app/models/surveyValues');
+const Favorite = require('../app/models/favorite');
+const Payment = require('../app/models/payment')
 
 const fileTypeFromFile = async buf => {
     fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
@@ -525,6 +527,39 @@ const resolvers = {
             } catch {
                 const error = new Error('Input Error');
                 error.data = errorMessage;
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getUsers: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                try {
+                    let page = 1;
+                    let limit = 10;
+
+                    if (!args.userId) {
+                        const users = await User.paginate({}, { page, limit, sort: { createdAt: -1 } });
+                        return users.docs;
+                    } else {
+                        const user = await User.findById(args.userId);
+                        return [user];
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = 'دسترسی به اطلاعات امکان پذیر نیست';
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
                 error.code = 401;
                 throw new GraphQLError(error.data, {
                     extensions: { code: error.code },
@@ -1575,7 +1610,117 @@ const resolvers = {
             }
         },
 
+        favorite: async (param, args, { check }) => {
+            if (check) {
+                let errorMessage = 'لیست علاقمندی موجود نمی باشد';
+                try {
 
+                    const product = await Product.findById(args.productId);
+                    if (!product) {
+                        errorMessage = 'چنین محصولی در سیستم ثبت نشده است';
+                        throw error;
+                    }
+
+                    const favorite = await Favorite.findOne({ $and: [{ user: check.id }, { product: args.productId }] });
+                    if (favorite) {
+                        await favorite.remove();
+
+                        return {
+                            status: 200,
+                            message: 'محصول از لیست علاقمندی خارج شد'
+                        }
+
+                    } else {
+                        await Favorite.create({
+                            user: check.id,
+                            product: args.productId
+                        });
+
+                        return {
+                            status: 200,
+                            message: 'محصول به لیست علاقمندی اضافه شد'
+                        }
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        payment: async (param, args, { check, info }) => {
+            if (check) {
+                let errorMessage = 'امکان نهایی کردن سفارش وجود نداردُ';
+                try {
+                    let price = 0;
+                    const orderStatus = await OrderStatus.findOne({ default: true });
+
+                    if (info.length == 0) {
+                        const attribute = await args.input.products.map(item => item.attribute);
+
+                        for (let index = 0; index < attribute.length; index++) {
+                            const element = attribute[index];
+                            const productAttribute = await ProductAttribute.findById(element);
+                            if (productAttribute.count == 0) {
+                                const removeIndex = attribute.indexOf(productAttribute._id);
+                                args.input.products.splice(removeIndex, 1);
+                                errorMessage = 'موجودی محصول کافی نمیباشد';
+                                throw errorMessage
+                            } else {
+                                price += (productAttribute.price - ((productAttribute.price * productAttribute.discount) / 100));
+                            }
+                        }
+
+                        //*  Online payment process *////
+
+                        await Payment.create({
+                            user: check.id,
+                            products: args.input.products,
+                            discount: args.input.discount,
+                            count: args.input.count,
+                            price: (price - ((price * args.input.discount) / 100)),
+                            orderStatus: orderStatus._id
+                        });
+
+                        return {
+                            status: 200,
+                            message: 'ok'
+                        }
+
+                    } else {
+                        errorMessage = 'اطلاعات حساب کاربری شما کامل نشده است';
+                        throw error;
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
 
     },
 
@@ -1619,6 +1764,10 @@ const resolvers = {
     SurveyValue: {
         survey: async (param, args) => await Survey.findById(param.survey)
     },
+    User: {
+        favorite: async (param, args) => await Favorite.find({ user: param._id }),
+        comment: async (param, args) => await Comment.find({ user: param._id })
+    }
 
 }
 
