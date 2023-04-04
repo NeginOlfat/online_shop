@@ -6,6 +6,10 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
+import axios from 'axios'
+
+axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.headers['Accept'] = 'application/json';
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>

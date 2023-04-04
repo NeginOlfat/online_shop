@@ -1,5 +1,5 @@
-import React from 'react'
-
+import React, { useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CAvatar,
   CButton,
@@ -17,10 +17,10 @@ import {
   CTableHead,
   CTableHeaderCell,
   CTableRow,
-} from '@coreui/react'
-import { CChartLine } from '@coreui/react-chartjs'
-import { getStyle, hexToRgba } from '@coreui/utils'
-import CIcon from '@coreui/icons-react'
+} from '@coreui/react';
+import { CChartLine } from '@coreui/react-chartjs';
+import { getStyle, hexToRgba } from '@coreui/utils';
+import CIcon from '@coreui/icons-react';
 import {
   cibCcAmex,
   cibCcApplePay,
@@ -42,20 +42,30 @@ import {
   cilPeople,
   cilUser,
   cilUserFemale,
-} from '@coreui/icons'
+} from '@coreui/icons';
 
-import avatar1 from 'src/assets/images/avatars/1.jpg'
-import avatar2 from 'src/assets/images/avatars/2.jpg'
-import avatar3 from 'src/assets/images/avatars/3.jpg'
-import avatar4 from 'src/assets/images/avatars/4.jpg'
-import avatar5 from 'src/assets/images/avatars/5.jpg'
-import avatar6 from 'src/assets/images/avatars/6.jpg'
+import avatar1 from 'src/assets/images/avatars/1.jpg';
+import avatar2 from 'src/assets/images/avatars/2.jpg';
+import avatar3 from 'src/assets/images/avatars/3.jpg';
+import avatar4 from 'src/assets/images/avatars/4.jpg';
+import avatar5 from 'src/assets/images/avatars/5.jpg';
+import avatar6 from 'src/assets/images/avatars/6.jpg';
 
-import WidgetsBrand from '../widgets/WidgetsBrand'
-import WidgetsDropdown from '../widgets/WidgetsDropdown'
+import WidgetsBrand from '../widgets/WidgetsBrand';
+import WidgetsDropdown from '../widgets/WidgetsDropdown';
+
+import { AuthContext } from 'src/context/auth/AuthContext';
+
 
 const Dashboard = () => {
-  const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
+  const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+  let navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
+
+  useEffect(() => {
+    dispatch({ type: 'check', payload: navigate });
+  }, []);
 
   const progressExample = [
     { title: 'Visits', value: '29.703 Users', percent: 40, color: 'success' },
