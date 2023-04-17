@@ -16,6 +16,11 @@ const authReducer = (state, action) => {
             }
             break;
 
+        case 'logout':
+            localStorage.removeItem('token');
+            action.payload('/');
+            break;
+
         default:
             return state;
     }

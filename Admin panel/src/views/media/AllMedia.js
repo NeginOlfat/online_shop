@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
 import {
     CCard,
     CCardBody,
@@ -13,16 +12,12 @@ import {
 } from '@coreui/react'
 import { ToastContainer, toast } from 'react-toastify';
 import axios from "axios";
-import { AuthContext } from 'src/context/auth/AuthContext';
 
 import classes from './media.module.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const AllMedia = () => {
-
-    let navigate = useNavigate();
-    const { dispatch } = useContext(AuthContext);
 
     const [medias, setMedias] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -32,7 +27,6 @@ const AllMedia = () => {
     const [selectedItem, setSelectedItem] = useState(null);
 
     useEffect(() => {
-        dispatch({ type: 'check', payload: navigate });
         axios({
             url: '/',
             method: 'post',
@@ -54,7 +48,6 @@ const AllMedia = () => {
                     "limit": 10
                 },
             },
-            // csrfPrevention: { requestHeaders: ['X-Apollo-Operation-Name'] },
             headers: {
                 'Content-Type': 'application/json',
             }

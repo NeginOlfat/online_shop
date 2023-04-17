@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
 import {
     CButton,
     CCard,
@@ -27,14 +26,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const AddMedia = () => {
 
-    let navigate = useNavigate();
-
     const [loadedFiles, setLoadedFiles] = useState([]);
-    const { dispatch } = useContext(AuthContext);
-
-    useEffect(() => {
-        dispatch({ type: 'check', payload: navigate });
-    }, []);
 
     const OnFilesLoad = (event) => {
         const files = event.target.files;

@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { AppContent, AppSidebar, AppFooter, AppHeader } from '../components/index'
+import { AuthContext } from '../context/auth/AuthContext';
+
 
 const DefaultLayout = () => {
+
+  let navigate = useNavigate();
+  const { dispatch } = useContext(AuthContext);
+
+  useEffect(() => {
+    dispatch({ type: 'check', payload: navigate });
+  }, []);
+
   return (
     <div>
       <AppSidebar />
