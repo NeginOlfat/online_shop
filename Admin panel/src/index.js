@@ -7,9 +7,13 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
 import axios from 'axios'
+import GetToken from './context/auth/GetToken';
+
+const token = GetToken();
 
 axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.headers['Accept'] = 'application/json';
+axios.defaults.headers['token'] = token;
 
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>

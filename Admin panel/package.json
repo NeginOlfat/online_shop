@@ -2,7 +2,7 @@
   "name": "@coreui/coreui-free-react-admin-template",
   "version": "4.4.0",
   "description": "CoreUI Free React Admin Template",
-  "homepage": ".",
+  "homepage": "",
   "bugs": {
     "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
   },
@@ -22,6 +22,7 @@
     "test:debug": "react-scripts --inspect-brk test --runInBand"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.12",
     "@coreui/chartjs": "^3.0.0",
     "@coreui/coreui": "^4.2.1",
     "@coreui/icons": "^2.1.0",
@@ -43,6 +44,7 @@
     "react-recaptcha": "^2.3.10",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
+    "react-toastify": "^9.1.2",
     "redux": "4.2.0",
     "simplebar-react": "^2.4.1",
     "yup": "^1.0.2"
