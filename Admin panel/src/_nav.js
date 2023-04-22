@@ -66,6 +66,19 @@ const _nav = [
   },
   {
     component: CNavGroup,
+    name: 'امور فروشگاه',
+    to: '/shop',
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'دسته بندی',
+        to: '/shop/Category',
+      }
+    ]
+  },
+  {
+    component: CNavGroup,
     name: 'Base',
     to: '/base',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,

@@ -1,0 +1,15 @@
+.image {
+    width: 210px;
+    margin: 5px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    text-align: center;
+    padding: 10px;
+    position: relative;
+}
+
+.removeIcon {
+    position: absolute;
+    left: -5px;
+    top: -5px;
+}

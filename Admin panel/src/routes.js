@@ -51,12 +51,14 @@ const Toasts = React.lazy(() => import('./views/notifications/toasts/Toasts'))
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const AddMedia = React.lazy(() => import('./views/media/AddMedia'));
 const AllMedia = React.lazy(() => import('./views/media/AllMedia'));
+const Category = React.lazy(() => import('./views/shop/Category'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
   { path: '/dashboard', name: 'داشبورد', element: Dashboard },
   { path: '/media/AddMedia', name: 'اضافه کردن پرونده چند رسانه ای', element: AddMedia },
   { path: '/media/AllMedia', name: 'کتابخانه پرونده های چند رسانه ای', element: AllMedia },
+  { path: '/shop/Category', name: 'دسته بندی', element: Category },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
