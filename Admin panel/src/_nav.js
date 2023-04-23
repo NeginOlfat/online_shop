@@ -74,6 +74,11 @@ const _nav = [
         component: CNavItem,
         name: 'دسته بندی',
         to: '/shop/Category',
+      },
+      {
+        component: CNavItem,
+        name: 'برند ها',
+        to: '/shop/Brand',
       }
     ]
   },

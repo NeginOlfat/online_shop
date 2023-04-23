@@ -52,6 +52,7 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const AddMedia = React.lazy(() => import('./views/media/AddMedia'));
 const AllMedia = React.lazy(() => import('./views/media/AllMedia'));
 const Category = React.lazy(() => import('./views/shop/Category'));
+const Brand = React.lazy(() => import('./views/shop/Brand'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
@@ -59,6 +60,7 @@ const routes = [
   { path: '/media/AddMedia', name: 'اضافه کردن پرونده چند رسانه ای', element: AddMedia },
   { path: '/media/AllMedia', name: 'کتابخانه پرونده های چند رسانه ای', element: AllMedia },
   { path: '/shop/Category', name: 'دسته بندی', element: Category },
+  { path: '/shop/Brand', name: 'برند ها', element: Brand },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
