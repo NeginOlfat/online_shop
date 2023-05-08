@@ -79,6 +79,16 @@ const _nav = [
         component: CNavItem,
         name: 'برند ها',
         to: '/shop/Brand',
+      },
+      {
+        component: CNavItem,
+        name: 'معیارهای امتیاز دهی ',
+        to: '/shop/Scoring',
+      },
+      {
+        component: CNavItem,
+        name: 'مشخصات',
+        to: '/shop/Specifications',
       }
     ]
   },

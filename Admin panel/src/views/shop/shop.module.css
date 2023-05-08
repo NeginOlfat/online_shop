@@ -59,3 +59,22 @@ input[type="file"] {
     height: 110px;
     padding-top: 10px;
 }
+
+.addButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.plusIcon {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.showSurvey {
+    color: '#63c2de';
+    text-decoration: underline;
+    cursor: pointer;
+}

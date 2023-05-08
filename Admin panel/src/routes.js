@@ -53,6 +53,8 @@ const AddMedia = React.lazy(() => import('./views/media/AddMedia'));
 const AllMedia = React.lazy(() => import('./views/media/AllMedia'));
 const Category = React.lazy(() => import('./views/shop/Category'));
 const Brand = React.lazy(() => import('./views/shop/Brand'));
+const Scoring = React.lazy(() => import('./views/shop/Scoring'));
+const Specifications = React.lazy(() => import('./views/shop/Specifications'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
@@ -61,6 +63,8 @@ const routes = [
   { path: '/media/AllMedia', name: 'کتابخانه پرونده های چند رسانه ای', element: AllMedia },
   { path: '/shop/Category', name: 'دسته بندی', element: Category },
   { path: '/shop/Brand', name: 'برند ها', element: Brand },
+  { path: '/shop/Scoring', name: ' معیارهای امتیاز دهی', element: Scoring },
+  { path: '/shop/Specifications', name: 'مشخصات', element: Specifications },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
