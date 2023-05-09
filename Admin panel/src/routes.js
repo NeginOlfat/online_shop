@@ -55,6 +55,8 @@ const Category = React.lazy(() => import('./views/shop/Category'));
 const Brand = React.lazy(() => import('./views/shop/Brand'));
 const Scoring = React.lazy(() => import('./views/shop/Scoring'));
 const Specifications = React.lazy(() => import('./views/shop/Specifications'));
+const SubSpecifications = React.lazy(() => import('./views/shop/SubSpecifications'));
+const Seller = React.lazy(() => import('./views/products/Seller'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
@@ -65,6 +67,8 @@ const routes = [
   { path: '/shop/Brand', name: 'برند ها', element: Brand },
   { path: '/shop/Scoring', name: ' معیارهای امتیاز دهی', element: Scoring },
   { path: '/shop/Specifications', name: 'مشخصات', element: Specifications },
+  { path: '/shop/SubSpecifications', name: 'ریز مشخصات', element: SubSpecifications },
+  { path: '/products/Seller', name: 'فروشندگان', element: Seller },
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },

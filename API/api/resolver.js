@@ -53,9 +53,24 @@ const dateScalar = new GraphQLScalarType({
     },
 });
 
+const uploadScalar = new GraphQLScalarType({
+    name: "Upload",
+    description: "The `Upload` scalar type represents a file upload.",
+    parseValue(value) {
+        if (value instanceof Upload) return value.promise;
+        throw new GraphQLError("Upload value invalid.");
+    },
+    parseLiteral(node) {
+        throw new GraphQLError("Upload literal unsupported.", { nodes: node });
+    },
+    serialize() {
+        throw new GraphQLError("Upload serialization unsupported.");
+    },
+});
+
 const resolvers = {
 
-    Upload: require("graphql-upload-minimal").GraphQLUpload,
+    Upload: uploadScalar,
     Date: dateScalar,
 
     Query: {
@@ -620,31 +635,27 @@ const resolvers = {
         },
 
         multimedia: async (param, args, { check, isAdmin }) => {
-            console.log("args.image")
             if (check && isAdmin) {
-                let errorMessage;
                 try {
+                    const { createReadStream, filename } = await args.image;
+                    const stream = createReadStream();
+                    const { filePath } = await saveImage({ stream, filename });
 
-                    console.log(args)
-                    // const { createReadStream, filename } = await args.image;
-                    // const stream = createReadStream();
-                    // const { filePath } = await saveImage({ stream, filename });
+                    await Multimedia.create({
+                        name: filename,
+                        dir: filePath
+                    })
 
-                    // await Multimedia.create({
-                    //     name: filename,
-                    //     dir: filePath
-                    // })
-
-                    // return {
-                    //     status: 200,
-                    //     message: 'تصاویر در رسانه ذخیره شد'
-                    // }
+                    return {
+                        status: 200,
+                        message: 'تصاویر در رسانه ذخیره شد'
+                    }
 
                 } catch {
                     const error = new Error('Input Error');
-                    error.data = errorMessage;
+                    error.data = 'امکان ذخیره عکس وجود ندارد';
                     error.code = 401;
-                    throw new GraphQLError(errorMessage, {
+                    throw new GraphQLError(error.data, {
                         extensions: { code: error.code },
                     });
                 }
@@ -660,7 +671,7 @@ const resolvers = {
 
         category: async (param, args, { check, isAdmin }) => {
             if (check && isAdmin) {
-                let errorMessage = 'ذخیره دسته یندی امکان پذیر نیست';
+                let errorMessage = 'ذخیره دسته بندی امکان پذیر نیست';
                 try {
 
                     if (validator.isEmpty(args.name)) {
@@ -710,12 +721,14 @@ const resolvers = {
                 let errorMessage = 'ذخیره برند امکان پذیر نیست'
                 try {
 
-                    // const { createReadStream, filename } = await args.image;
-                    // const stream = createReadStream();
-                    // // const { filePath } = await saveImage({ stream, filename });
-                    // if (validator.isEmpty(filePath)) {
-                    //      errorMessage = 'تصویر را نمی توانید خالی بگذارید' 
-                    // }
+                    const { createReadStream, filename } = await args.image;
+                    const stream = createReadStream();
+                    const { filePath } = await saveImage({ stream, filename });
+
+                    if (validator.isEmpty(filePath)) {
+                        errorMessage = 'تصویر را نمی توانید خالی بگذارید'
+                        throw error;
+                    }
 
                     if (validator.isEmpty(args.input.name)) {
                         errorMessage = 'نام برند را نمی توانید خالی بگذارید';
@@ -1353,6 +1366,53 @@ const resolvers = {
                     return {
                         status: 200,
                         message: 'اسلایدر مورد نظر ویرایش شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        updateSeller: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ویرایش فروشنده امکان پذیر نیست';
+                try {
+
+                    const seller = await Seller.findById(args.input.sellerId);
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'نام فروشنده را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (seller == null) {
+                        errorMessage = 'فروشنده مورد نظر در سیستم ثبت نشده است'
+                        throw error;
+                    }
+
+                    seller.set({
+                        name: args.input.name,
+                        label: args.input.label
+                    });
+
+                    await seller.save();
+
+                    return {
+                        status: 200,
+                        message: 'فروشنده مورد نظر ویرایش شد'
                     }
 
                 } catch {

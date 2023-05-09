@@ -41,13 +41,14 @@ const typeDefs = `#graphql
         updateProductAttribute (input: InputUpdateProductAttribute): operation!,
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
         updateProduct (input: InputUpdateProduct): operation!,
-        updateSlider (input: InputUpdateSlider): operation!
+        updateSlider (input: InputUpdateSlider): operation!,
+        updateSeller (input: InputUpdateSeller): operation!
     }
 
     input InputBrand {
         name: String!,
         category: [ID!]!,
-        image: Upload
+        image: Upload!
     }
 
     input InputSurvey {
@@ -163,6 +164,12 @@ const typeDefs = `#graphql
         name: String,
         images: [ID],
         default: Boolean
+    }
+
+    input InputUpdateSeller {
+        sellerId: ID!,
+        name: String,
+        label: String
     }
 
 
