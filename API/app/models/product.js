@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const Product = Schema({
     persianName: { type: String, required: true },
     englishName: { type: String, required: true },
+    rate: { type: Number },
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     attribute: [{ type: Schema.Types.ObjectId, ref: 'ProductAttribute', required: true }],
     details: [{ type: Schema.Types.ObjectId, ref: 'ProductDetails', required: true }],

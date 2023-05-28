@@ -21,7 +21,7 @@ const OrderStatus = require('../app/models/orderStatus');
 const Comment = require('../app/models/comment');
 const SurveyValues = require('../app/models/surveyValues');
 const Favorite = require('../app/models/favorite');
-const Payment = require('../app/models/payment')
+const Payment = require('../app/models/payment');
 
 const fileTypeFromFile = async buf => {
     fileTypeFromFile._cached = fileTypeFromFile._cached || (await import("file-type")).fileTypeFromFile
@@ -54,17 +54,29 @@ const dateScalar = new GraphQLScalarType({
 });
 
 const uploadScalar = new GraphQLScalarType({
-    name: "Upload",
-    description: "The `Upload` scalar type represents a file upload.",
+    name: 'Upload',
+    description: 'The `Upload` scalar type represents an image..',
+    serialize(value) {
+        console.log(value)
+        if (value instanceof Promise) return value;
+        throw new GraphQLError('Upload value invalid.');
+    },
     parseValue(value) {
-        if (value instanceof Upload) return value.promise;
-        throw new GraphQLError("Upload value invalid.");
+        console.log(value)
+        if (value instanceof Promise) return value;
+        const { createReadStream, filename, mimetype, encoding } = value;
+        if (!createReadStream) {
+            throw new GraphQLError('Upload value invalid.');
+        }
+        const stream = createReadStream();
+        stream.filename = filename;
+        stream.mimetype = mimetype;
+        stream.encoding = encoding;
+        return stream;
     },
-    parseLiteral(node) {
-        throw new GraphQLError("Upload literal unsupported.", { nodes: node });
-    },
-    serialize() {
-        throw new GraphQLError("Upload serialization unsupported.");
+    parseLiteral(ast) {
+        console.log(ast)
+        throw new GraphQLError(`Upload literal unsupported.${ast}`);
     },
 });
 
@@ -101,7 +113,7 @@ const resolvers = {
                     errorMessage = 'کلمه عبور وارد شده اشتباه است';
                     throw error;
                 }
-
+                console.log(secretId)
                 return {
                     token: await User.CreateToken(user.id, secretId, '8h')
                 }
@@ -1044,6 +1056,7 @@ const resolvers = {
         },
 
         product: async (param, args, { check, isAdmin }) => {
+            console.log(args.input)
             if (check && isAdmin) {
                 let errorMessage = 'ذخیره محصول امکان پذیر نیست';
                 let attributes = [];
@@ -1100,19 +1113,21 @@ const resolvers = {
                     if (attributes.length == 0 || details.length == 0)
                         throw error
 
-                    // const { createReadStream, filename } = await args.input.original;
-                    // const stream = createReadStream();
-                    // const { filePath } = await saveImage({ stream, filename });
+                    console.log(args.input.original)
+                    const { createReadStream, filename } = await args.input.original;
+                    const stream = createReadStream();
+                    const { filePath } = await saveImage({ stream, filename });
 
                     await Product.create({
                         persianName: args.input.persianName,
                         englishName: args.input.englishName,
+                        rate: null,
                         category: args.input.category,
                         brand: args.input.brand,
                         attribute: attributes,
                         details: details,
                         description: args.input.description,
-                        original: args.input.original
+                        original: filePath
                     });
 
                     return {
@@ -1158,12 +1173,12 @@ const resolvers = {
                             status: 200,
                             message: 'فروشنده جدید به محصول اضافه شد'
                         }
-                    } else if (args.input.attributeId && !args.input.isAddSeller) {
+                    } else if (!args.input.isAddSeller) {
                         for (let index = 0; index < args.input.attribute.length; index++) {
                             const element = args.input.attribute[index];
-                            await ProductAttribute.findByIdAndUpdate(args.input.attributeId, {
+                            console.log(element._id)
+                            await ProductAttribute.findOneAndUpdate({ _id: element._id }, {
                                 $set: {
-                                    seller: element.seller,
                                     color: element.color,
                                     stock: element.stock,
                                     price: element.price,

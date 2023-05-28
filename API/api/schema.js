@@ -96,6 +96,7 @@ const typeDefs = `#graphql
     }
 
     input InputAttribute {
+        _id: ID,
         seller: ID!,
         color: String!,
         stock: Int!,
@@ -138,9 +139,9 @@ const typeDefs = `#graphql
 
 
     input InputUpdateProductAttribute {
+        _id: ID,
         isAddSeller: Boolean = false,
         productId: ID,
-        attributeId: ID,
         attribute: [InputAttribute!]!
     }
 
@@ -285,6 +286,7 @@ const typeDefs = `#graphql
         _id: ID,
         persianName: String!,
         englishName: String!,
+        rate: Int,
         category: Category,
         brand: Brand,
         description: String,
@@ -295,6 +297,7 @@ const typeDefs = `#graphql
     }
 
     type Attribute {
+        _id: ID,
         seller: Seller,
         color: String,
         stock: Int,
@@ -303,6 +306,7 @@ const typeDefs = `#graphql
     }
 
     type Details {
+        _id: ID,
         productSpecsDetails: SpecsDetails,
         value: String
     }

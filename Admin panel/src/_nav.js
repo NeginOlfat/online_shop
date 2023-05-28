@@ -89,7 +89,35 @@ const _nav = [
         component: CNavItem,
         name: 'مشخصات',
         to: '/shop/Specifications',
+      },
+      {
+        component: CNavItem,
+        name: 'ریز مشخصات',
+        to: '/shop/SubSpecifications',
       }
+    ]
+  },
+  {
+    component: CNavGroup,
+    name: 'محصولات',
+    to: '/products',
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'فروشندگان ',
+        to: '/products/Seller',
+      },
+      {
+        component: CNavItem,
+        name: 'اضافه کردن محصول ',
+        to: '/products/AddProduct',
+      },
+      {
+        component: CNavItem,
+        name: 'لیست محصولات',
+        to: '/products/Products',
+      },
     ]
   },
   {

@@ -1,0 +1,90 @@
+.addButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.plusIcon {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.colorBox {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.fileSelection {
+    padding: 0.25rem 0.5rem;
+    font-size: 1.256 rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+    background-color: #20a8d8;
+    border-color: #20a8d8;
+    margin: 15px;
+    color: #fff;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.preview {
+    width: 200px;
+    height: 200px;
+    padding-top: 10px;
+}
+
+.productDetalis {
+    text-align: center;
+    justify-content: center;
+}
+
+.productDetalis img {
+    width: 90px;
+    height: 50px;
+}
+
+.bothName {
+    display: flex;
+    flex-flow: column;
+}
+
+.bothName span {
+    margin-top: 4px;
+}
+
+.operation {
+    margin-left: 10px;
+}
+
+.row {
+    margin-bottom: 30px;
+}
+
+.text {
+    color: #fff
+}
+
+.media {
+    width: 17.5%;
+    margin: 5px auto;
+    padding: 10px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    text-align: center
+}
+
+.remoceIconPicturesProduct {
+    display: flex;
+    font-size: 40px;
+    justify-content: flex-end;
+}
+
+.icon {
+    color: rgb(89, 91, 91);
+}

@@ -11,7 +11,7 @@ import GetToken from './context/auth/GetToken';
 
 const token = GetToken();
 
-axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.baseURL = "http://localhost:4000//graphql";
 axios.defaults.headers['Accept'] = 'application/json';
 axios.defaults.headers['token'] = token;
 

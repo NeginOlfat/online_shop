@@ -11,7 +11,6 @@ import {
     CFormInput,
     CCol,
     CRow,
-    CInputGroup,
     CTable,
     CTableHead,
     CTableRow,
@@ -20,7 +19,7 @@ import {
     CTableDataCell,
 } from '@coreui/react'
 import { ToastContainer, toast } from 'react-toastify';
-import { BiPlusMedical } from "react-icons/bi";
+import { FaPlus } from "react-icons/fa";
 import axios from "axios";
 
 import ScoringItem from "./ScoringItem";
@@ -221,7 +220,7 @@ const Scoring = () => {
 
                             <CCol xs='2' className={classes.addButton}>
                                 <CButton color="danger" shape="rounded-pill" onClick={addSurvey}>
-                                    <BiPlusMedical className={classes.plusIcon} />
+                                    <FaPlus className={classes.plusIcon} />
                                 </CButton>
                             </CCol>
 
