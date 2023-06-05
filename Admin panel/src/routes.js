@@ -13,6 +13,9 @@ const AddProduct = React.lazy(() => import('./views/products/AddProduct'));
 const Products = React.lazy(() => import('./views/products/Products'));
 const EditProduct = React.lazy(() => import('./views/products/EditProduct'));
 const ProductPictures = React.lazy(() => import('./views/products/ProductPictures'));
+const Status = React.lazy(() => import('./views/orders/Status'));
+const Orders = React.lazy(() => import('./views/orders/Orders'));
+const OrderDetails = React.lazy(() => import('./views/orders/OrderDetails'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
@@ -28,7 +31,10 @@ const routes = [
   { path: '/products/AddProduct', name: 'اضافه کردن محصول', element: AddProduct },
   { path: '/products/Products', name: ' محصولات', element: Products },
   { path: '/products/product/:productid', exact: true, name: 'ویرایش اطاعات محصول', element: EditProduct },
-  { path: '/products/picture/:productid', exact: true, name: 'عکس های محصول', element: ProductPictures }
+  { path: '/products/picture/:productid', exact: true, name: 'عکس های محصول', element: ProductPictures },
+  { path: '/orders/Status', exact: true, name: ' وضعیت سفارشات ', element: Status },
+  { path: '/orders/Orders', exact: true, name: ' سفارشات ', element: Orders },
+  { path: '/orders/detail/:orderid', exact: true, name: ' جزئیات سفارش ', element: OrderDetails },
 ]
 
 export default routes

@@ -593,6 +593,63 @@ const resolvers = {
                 });
             }
         },
+
+        getAllOrderStatus: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                try {
+                    const orderStatus = await OrderStatus.find();
+                    return orderStatus;
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = 'دسترسی به اطلاعات امکان پذیر نیست';
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        getAllPayment: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                try {
+                    let page = 1 || args.page;
+                    let limit = 10 || args.limit;
+
+                    if (!args.orderId) {
+                        const order = await Payment.paginate({}, { page, limit, sort: { createdAt: -1 } });
+                        return order.docs;
+                    } else {
+                        const order = await Payment.findById(args.orderId);
+                        return [order];
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = 'دسترسی به اطلاعات امکان پذیر نیست';
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                console.log(args.input)
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
     },
 
     Mutation: {
@@ -1471,19 +1528,70 @@ const resolvers = {
                         }
                     }
 
-                    const { createReadStream, filename } = await args.image;
-                    const stream = createReadStream();
-                    const { filePath } = await saveImage({ stream, filename });
+                    // const { createReadStream, filename } = await args.image;
+                    // const stream = createReadStream();
+                    // const { filePath } = await saveImage({ stream, filename });
 
                     await OrderStatus.create({
                         name: args.input.name,
-                        image: filePath,
+                        image: "/uploads/2023/5/ors.svg",
                         default: args.input.default
                     });
 
                     return {
                         status: 200,
                         message: 'وضعیت سفارش ذخیره شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        updateOrderStatus: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ویرایش وضعیت سفارش امکان پذیر نیست';
+                try {
+
+                    const orderStatus = await OrderStatus.findById(args.input.orderStatusId);
+
+                    if (validator.isEmpty(args.input.name)) {
+                        errorMessage = 'عنوان وضعیت را وارد نمایید'
+                        throw error;
+                    }
+
+                    if (orderStatus == null) {
+                        errorMessage = 'وضعیت مورد نظر در سیستم ثبت نشده است'
+                        throw error;
+                    }
+
+                    if (!orderStatus.default && args.input.default) {
+                        await OrderStatus.findOneAndUpdate({ default: true }, { $set: { default: false } });
+                    }
+
+                    orderStatus.set({
+                        name: args.input.name,
+                        default: args.input.default
+                    });
+
+                    await orderStatus.save();
+
+                    return {
+                        status: 200,
+                        message: 'وضعیت سفارش  مورد نظر ویرایش شد'
                     }
 
                 } catch {
@@ -1797,6 +1905,41 @@ const resolvers = {
             }
         },
 
+        updatePayment: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'ویرایش وضعیت سفارش امکان پذیر نیست';
+                try {
+                    const payment = await Payment.findById(args.paymentId);
+
+                    payment.set({
+                        orderStatus: args.orderStatusId
+                    });
+
+                    await payment.save();
+
+                    return {
+                        status: 200,
+                        message: 'وضعیت سفارش  مورد نظر ویرایش شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
     },
 
     // relationship of Types 
@@ -1841,7 +1984,25 @@ const resolvers = {
     },
     User: {
         favorite: async (param, args) => await Favorite.find({ user: param._id }),
-        comment: async (param, args) => await Comment.find({ user: param._id })
+        comment: async (param, args) => await Comment.find({ user: param._id }),
+    },
+    Payment: {
+        user: async (param, args) => await User.findById(param.user),
+        orderStatus: async (param, args) => await OrderStatus.findById(param.orderStatus),
+        products: async (param, args) => {
+            let prdt = []
+            for (let i = 0; i < param.products.length; i++)
+                prdt.push(await Product.findById(param.products[i].product))
+
+            return prdt
+        },
+        attribute: async (param, args) => {
+            let att = []
+            for (let i = 0; i < param.products.length; i++)
+                att.push(await ProductAttribute.findById(param.products[i].attribute))
+
+            return att
+        },
     }
 
 }

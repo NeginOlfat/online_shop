@@ -18,6 +18,8 @@ const typeDefs = `#graphql
         getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
         getAllComment (input: InputGetComment): [Comment],
         getUsers (userId: ID): [User],
+        getAllOrderStatus : [OrderStatus],
+        getAllPayment (page: Int, limit: Int, orderId: ID): [Payment]
     }
     
     type Mutation {
@@ -42,7 +44,9 @@ const typeDefs = `#graphql
         updateProductImages (productId:ID!, imagesId: [ID!]!): operation!,
         updateProduct (input: InputUpdateProduct): operation!,
         updateSlider (input: InputUpdateSlider): operation!,
-        updateSeller (input: InputUpdateSeller): operation!
+        updateSeller (input: InputUpdateSeller): operation!,
+        updateOrderStatus (input: InputUpdateOrderStatus): operation!,
+        updatePayment (paymentId: ID!, orderStatusId: ID!): operation!
     }
 
     input InputBrand {
@@ -171,6 +175,12 @@ const typeDefs = `#graphql
         sellerId: ID!,
         name: String,
         label: String
+    }
+
+    input InputUpdateOrderStatus {
+        orderStatusId: ID!,
+        name: String!,
+        default: Boolean!
     }
 
 
@@ -330,6 +340,9 @@ const typeDefs = `#graphql
     type User {
         _id: ID,
         phone: String,
+        fname: String,
+        lname: String,
+        address: String,
         favorite: [Favorite],
         comment: [Comment]
     }
@@ -338,7 +351,26 @@ const typeDefs = `#graphql
         user: User,
         product: Product
     }
+
+    type OrderStatus {
+         _id: ID,
+         name: String,
+         image: String,
+         default: Boolean
+    }
     
+    type Payment {
+        _id: ID,
+        user: User,
+        products: [Product],
+        attribute: [Attribute],
+        orderStatus:  OrderStatus,
+        paymentStatus: Boolean ,
+        count: Int,
+        price: Int,
+        discount: Int,
+        createdAt: Date,
+    }
 
 `;
 
