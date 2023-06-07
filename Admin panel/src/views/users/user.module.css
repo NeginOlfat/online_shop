@@ -1,0 +1,72 @@
+.icon {
+    color: white;
+    font-size: 20px;
+    margin-bottom: 3px;
+}
+
+.CommentUserShopping {
+    list-style: none;
+    padding: 10px 0 0;
+}
+
+.comment_text {
+    text-align: justify;
+    font-size: 18px;
+}
+
+.comment_likes {
+    display: flex;
+    text-align: left;
+    color: #777777;
+    font-size: 14px;
+    line-height: 1.692;
+    margin-top: 17px;
+}
+
+.btn_like {
+    border-radius: 8px;
+    border: 1px solid #ededed;
+    background-color: #ffffff;
+    padding: 2px 13px;
+    color: #8c8c8c;
+    font-size: 16px;
+    margin-right: 17px;
+    width: 66px;
+    line-height: 1.692;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.CommentDate {
+    color: #8c8c8c;
+    font-size: 16px;
+}
+
+.summarybox {
+    width: 100%;
+    position: relative;
+    min-height: 53px;
+    flex: 0 0 50%;
+    max-width: 100%;
+    background-color: #fcfcfc;
+    margin-top: 17px;
+}
+
+.rating {
+    list-style: none;
+    padding: 10px 10px 10px 0;
+    background-color: #fcfcfc;
+    border-radius: 5px;
+}
+
+.preview {
+    width: 90px;
+    height: 90px;
+}
+
+.colorProduct {
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
+}

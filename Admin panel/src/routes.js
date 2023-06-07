@@ -16,6 +16,12 @@ const ProductPictures = React.lazy(() => import('./views/products/ProductPicture
 const Status = React.lazy(() => import('./views/orders/Status'));
 const Orders = React.lazy(() => import('./views/orders/Orders'));
 const OrderDetails = React.lazy(() => import('./views/orders/OrderDetails'));
+const Users = React.lazy(() => import('./views/users/Users'));
+const User = React.lazy(() => import('./views/users/User'));
+const Comments = React.lazy(() => import('./views/users/Comments'));
+const CommentInfo = React.lazy(() => import('./views/users/CommentInfo'));
+const Favorites = React.lazy(() => import('./views/users/Favorites'));
+const UserOrders = React.lazy(() => import('./views/users/UserOrders'));
 
 const routes = [
   { path: '/', exact: true, name: 'صفحه اصلی' },
@@ -35,6 +41,13 @@ const routes = [
   { path: '/orders/Status', exact: true, name: ' وضعیت سفارشات ', element: Status },
   { path: '/orders/Orders', exact: true, name: ' سفارشات ', element: Orders },
   { path: '/orders/detail/:orderid', exact: true, name: ' جزئیات سفارش ', element: OrderDetails },
+  { path: '/users/Users', exact: true, name: ' کاربران ', element: Users },
+  { path: '/users/userinfo/:id', exact: true, name: ' مشخصات کاربران ', element: User },
+  { path: '/users/comments/:id', exact: true, name: ' نظرات کاربر ', element: Comments },
+  { path: '/commentDetails/:id', exact: true, name: ' جزئیات نظرات کاربر ', element: CommentInfo },
+  { path: '/users/favorites/:id', exact: true, name: ' لیست مورد علاقه  ', element: Favorites },
+  { path: '/users/userOrders/:id', exact: true, name: ' سفارشات کاربر ', element: UserOrders }
 ]
+
 
 export default routes

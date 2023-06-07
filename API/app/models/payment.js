@@ -11,7 +11,10 @@ const Payment = Schema({
     price: { type: Number, required: true },
     count: { type: Number },
     discount: { type: Number },
-    orderStatus: { type: Schema.Types.ObjectId, ref: 'OrderStatus' }
+    orderStatus: { type: Schema.Types.ObjectId, ref: 'OrderStatus' },
+    paymentStatus: { type: Boolean, default: false }
+}, {
+    timestamps: true
 })
 
 Payment.plugin(mongoosePaginate);

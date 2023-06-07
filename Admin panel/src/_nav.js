@@ -138,7 +138,19 @@ const _nav = [
       },
     ]
   },
-
+  {
+    component: CNavGroup,
+    name: 'امور کاربران',
+    to: '/users',
+    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'کاربران',
+        to: '/users/Users',
+      },
+    ]
+  },
 ]
 
 export default _nav

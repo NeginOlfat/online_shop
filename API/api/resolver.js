@@ -564,12 +564,9 @@ const resolvers = {
         getUsers: async (param, args, { check, isAdmin }) => {
             if (check && isAdmin) {
                 try {
-                    let page = 1;
-                    let limit = 10;
-
                     if (!args.userId) {
-                        const users = await User.paginate({}, { page, limit, sort: { createdAt: -1 } });
-                        return users.docs;
+                        const users = await User.find();
+                        return users;
                     } else {
                         const user = await User.findById(args.userId);
                         return [user];
@@ -1977,7 +1974,9 @@ const resolvers = {
         specs: async (param, args) => await ProductSpecs.findById(param.specs)
     },
     Comment: {
-        survey: async (param, args) => await SurveyValues.find({ _id: param.survey })
+        survey: async (param, args) => await SurveyValues.find({ _id: param.survey }),
+        product: async (param, args) => await Product.findById(param.product),
+        user: async (param, args) => await User.findById(param.user),
     },
     SurveyValue: {
         survey: async (param, args) => await Survey.findById(param.survey)
@@ -1985,6 +1984,7 @@ const resolvers = {
     User: {
         favorite: async (param, args) => await Favorite.find({ user: param._id }),
         comment: async (param, args) => await Comment.find({ user: param._id }),
+        payment: async (param, args) => await Payment.find({ user: param._id })
     },
     Payment: {
         user: async (param, args) => await User.findById(param.user),
@@ -2003,6 +2003,9 @@ const resolvers = {
 
             return att
         },
+    },
+    Favorite: {
+        product: async (param, args) => await Product.findById(param.product),
     }
 
 }

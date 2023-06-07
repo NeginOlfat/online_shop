@@ -294,8 +294,8 @@ const typeDefs = `#graphql
 
     type Product {
         _id: ID,
-        persianName: String!,
-        englishName: String!,
+        persianName: String,
+        englishName: String,
         rate: Int,
         category: Category,
         brand: Brand,
@@ -324,7 +324,7 @@ const typeDefs = `#graphql
     type Comment {
         _id: ID,
         user: User,
-        product: ID,
+        product: Product,
         survey: [SurveyValue],
         text: String,
         like: [User],
@@ -343,11 +343,15 @@ const typeDefs = `#graphql
         fname: String,
         lname: String,
         address: String,
+        code: String,
+        gender: String,
         favorite: [Favorite],
-        comment: [Comment]
+        comment: [Comment],
+        payment: [Payment]
     }
 
     type Favorite {
+        _id: ID,
         user: User,
         product: Product
     }
