@@ -1937,6 +1937,43 @@ const resolvers = {
             }
         },
 
+        deleteSlider: async (param, args, { check, isAdmin }) => {
+            if (check && isAdmin) {
+                let errorMessage = 'حذف اسلایدر امکان پذیر نیست';
+                try {
+
+                    const slider = await Slider.findById(args.sliderId);
+
+                    if (slider.default) {
+                        errorMessage = 'امکان حدف اسلایدر پیش فرض وجود ندارد';
+                        throw error;
+                    }
+
+                    await Slider.deleteOne(slider);
+
+                    return {
+                        status: 200,
+                        message: ' اسلایدر  مورد نظر حذف شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
     },
 
     // relationship of Types 

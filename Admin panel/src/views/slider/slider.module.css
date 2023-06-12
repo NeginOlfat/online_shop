@@ -1,0 +1,66 @@
+.checkBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.AddStatus {
+    justify-content: center;
+    align-items: center;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mediaSection {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    width: 90%;
+    margin: auto;
+}
+
+.media {
+    display: flex;
+    flex-flow: row wrap;
+    width: 17.5%;
+    margin: 5px auto;
+    padding: 10px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 3px #ccc;
+    text-align: center
+}
+
+.media img {
+    width: 100px;
+    height: 100px;
+}
+
+.text {
+    color: #fff;
+}
+
+.icon {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 2px;
+}
+
+.removeIcon {
+    position: inherit;
+}
+
+.thumbnail_box {
+    display: flex;
+    flex-flow: row;
+    justify-content: space-evenly;
+    padding: 17px;
+}
+
+.thumbnail_box div {
+    box-shadow: 1px 1px 1px 1px #ccc;
+    padding: 10px;
+}

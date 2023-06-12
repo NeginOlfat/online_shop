@@ -47,6 +47,8 @@ const typeDefs = `#graphql
         updateSeller (input: InputUpdateSeller): operation!,
         updateOrderStatus (input: InputUpdateOrderStatus): operation!,
         updatePayment (paymentId: ID!, orderStatusId: ID!): operation!
+
+        deleteSlider (sliderId: ID!): operation!
     }
 
     input InputBrand {

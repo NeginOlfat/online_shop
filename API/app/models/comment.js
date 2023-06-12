@@ -9,6 +9,8 @@ const Comment = Schema({
     text: { type: String, required: true },
     like: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     disLike: [{ type: Schema.Types.ObjectId, ref: 'User' }]
+}, {
+    timestamps: true
 });
 
 Comment.plugin(mongoosePaginate);
