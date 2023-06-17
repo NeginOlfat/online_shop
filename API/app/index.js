@@ -55,8 +55,8 @@ module.exports = class Application {
       },
       middleware: [
         graphqlUploadExpress({ maxFileSize: 10000, maxFiles: 10 }),
-        cors(),
-        bodyParser.json()
+        // cors(),
+        // bodyParser.json()
       ]
     });
 

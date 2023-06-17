@@ -1,19 +1,16 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
 import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDescription,
-  cilDrop,
-  cilNotes,
+  cilCart,
+  cilBlurLinear,
+  cilLibrary,
+  cilMoney,
+  cilGroup,
   cilPencil,
-  cilPuzzle,
+  cilSatelite,
   cilSpeedometer,
-  cilStar,
-} from '@coreui/icons'
-import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
+} from '@coreui/icons';
+import { CNavGroup, CNavItem } from '@coreui/react'
 
 const _nav = [
   {
@@ -26,7 +23,7 @@ const _nav = [
     component: CNavItem,
     name: 'اسلایدر',
     to: '/slider',
-    icon: <CIcon icon={cilDrop} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilSatelite} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
@@ -38,7 +35,7 @@ const _nav = [
     component: CNavGroup,
     name: 'رسانه',
     to: '/media',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilLibrary} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -56,7 +53,7 @@ const _nav = [
     component: CNavGroup,
     name: 'امور فروشگاه',
     to: '/shop',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -89,7 +86,7 @@ const _nav = [
     component: CNavGroup,
     name: 'محصولات',
     to: '/products',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilBlurLinear} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -112,7 +109,7 @@ const _nav = [
     component: CNavGroup,
     name: 'سفارشات',
     to: '/orders',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilMoney} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -130,7 +127,7 @@ const _nav = [
     component: CNavGroup,
     name: 'امور کاربران',
     to: '/users',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilGroup} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
