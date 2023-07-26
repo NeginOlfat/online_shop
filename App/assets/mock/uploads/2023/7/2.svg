@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="134.32 108.827 207.969 189.626" width="207.969" height="189.626" xmlns="http://www.w3.org/2000/svg">
+  <g class="cls-1" transform="matrix(1, 0, 0, 1, 98.802818, 98.675674)" style="opacity: 0.4;">
+    <path class="cls-2" d="M204.11,166.67c-47.76,45.59-85.4,43.38-133.17-2.21-45.59-43.52-48-84-2.42-127.55C116.29-8.68,142.23,11.95,202,40,263.88,69.1,249.71,123.15,204.11,166.67Z" style="fill: rgb(0, 191, 214);"/>
+  </g>
+  <path class="cls-3" d="M124.66,97.71,115.4,62.63A5,5,0,0,1,119,56.52l30.24-8a5,5,0,0,1,6.11,3.56l9.26,35.07" transform="matrix(1, 0, 0, 1, 98.802818, 98.675674)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+  <path class="cls-3" d="M131.71,88.24h58.92a5,5,0,0,1,5,5v58.92a0,0,0,0,1,0,0H131.71a0,0,0,0,1,0,0V88.24A0,0,0,0,1,131.71,88.24Z" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 73.532814, 144.455673)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+  <rect class="cls-4" x="142.33" y="98.86" width="42.67" height="42.67" rx="5" ry="5" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 73.532814, 144.455673)" style="fill: none; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+  <rect class="cls-5" x="115.34" y="37.28" width="10.43" height="130.01" rx="5.22" ry="5.22" transform="matrix(0.97, -0.26, 0.26, 0.97, 76.682816, 132.845673)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-miterlimit: 10;"/>
+  <rect class="cls-5" x="176.52" y="105.42" width="10.68" height="96.72" rx="5.34" ry="5.34" transform="matrix(0.255277, 0.966868, -0.966868, 0.255277, 382.902832, 37.355671)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-miterlimit: 10;"/>
+  <rect class="cls-5" x="83.02" y="23.56" width="10.43" height="37.21" rx="5.22" ry="5.22" transform="matrix(0.255277, 0.966868, -0.966868, 0.255277, 205.272812, 44.765671)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-miterlimit: 10;"/>
+  <circle class="cls-5" cx="103.76" cy="38.26" r="8.6" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 92.472816, 126.435669)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-miterlimit: 10;"/>
+  <circle class="cls-3" cx="137.15" cy="165.13" r="16.56" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 61.182819, 139.175674)" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+  <circle class="cls-6" cx="137.15" cy="165.13" r="7.02" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 61.182819, 139.175674)" style="fill: rgb(230, 230, 230); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+  <path class="cls-6" d="M129.65,52.19h14a0,0,0,0,1,0,0V70.46a2,2,0,0,1-2,2h-10a2,2,0,0,1-2-2V52.19a0,0,0,0,1,0,0Z" transform="matrix(0.966868, -0.255277, 0.255277, 0.966868, 87.422813, 135.635666)" style="fill: rgb(230, 230, 230); stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round;"/>
+</svg>

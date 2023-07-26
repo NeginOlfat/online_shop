@@ -14,6 +14,7 @@ const typeDefs = `#graphql
         getAllProductSpecsDetails (specsId: ID!): [SpecsDetails!]!,
         getAllSeller (categoryId: ID!): [Seller!]!,
         getAllSlider: [Slider!]!,
+        getDefaultSlider: Slider!,
         getProductInfo (input: InputGetProductInfo): ProductInfo!,
         getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
         getAllComment (input: InputGetComment): [Comment],
@@ -46,7 +47,8 @@ const typeDefs = `#graphql
         updateSlider (input: InputUpdateSlider): operation!,
         updateSeller (input: InputUpdateSeller): operation!,
         updateOrderStatus (input: InputUpdateOrderStatus): operation!,
-        updatePayment (paymentId: ID!, orderStatusId: ID!): operation!
+        updatePayment (paymentId: ID!, orderStatusId: ID!): operation!,
+        updateUser (input: InputUpdateUser): operation!
 
         deleteSlider (sliderId: ID!): operation!
     }
@@ -54,7 +56,7 @@ const typeDefs = `#graphql
     input InputBrand {
         name: String!,
         category: [ID!]!,
-        image: Upload!
+        image: Upload
     }
 
     input InputSurvey {
@@ -183,6 +185,15 @@ const typeDefs = `#graphql
         orderStatusId: ID!,
         name: String!,
         default: Boolean!
+    }
+
+    input InputUpdateUser {
+        userId: ID!,
+        fname: String,
+        lname: String,
+        address: String,
+        code: String,
+        gender: String,
     }
 
 

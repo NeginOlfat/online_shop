@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const { GraphQLError, GraphQLScalarType, Kind } = require('graphql');
 const path = require('path');
 const fs = require('fs');
-const ImageSize = require('image-size');
+const ImageS = require('image-size');
 
 const User = require('../app/models/users');
 const Multimedia = require('../app/models/multimedia');
@@ -137,11 +137,11 @@ const resolvers = {
 
                     for (let index = 0; index < media.docs.length; index++) {
                         const element = media.docs[index];
-                        ImageSize(path.join(__dirname, `/public/${element.dir}`), async (err, dim) => {
-                            element.dimWidth = await dim.width,
-                                element.dimHeight = await dim.height
+                        ImageS.imageSize(path.join(__dirname, `/public${element.dir}/${element.name}`), async (err, dim) => {
+                            element.dimWidth = await dim.width
+                            element.dimHeight = await dim.height
                         })
-                        const type = await fileTypeFromFile(path.join(__dirname, `/public/${element.dir}`))
+                        const type = await fileTypeFromFile(path.join(__dirname, `/public/${element.dir}/${element.name}`))
                         element.format = type.ext
                     }
 
@@ -167,6 +167,7 @@ const resolvers = {
 
         getAllCategory: async (param, args) => {
             try {
+
                 if (args.input.mainCategory == true) {
 
                     const page = args.input.page || 1;
@@ -423,6 +424,21 @@ const resolvers = {
             }
         },
 
+        getDefaultSlider: async (param, args) => {
+            try {
+                const slider = await Slider.findOne({ default: true });
+                return slider;
+
+            } catch {
+                const error = new Error('Input Error');
+                error.data = "not Found";
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
         getProductInfo: async (param, args, { check, isAdmin }) => {
             if (check && isAdmin) {
                 let errorMessage = 'دسترسی به اطلاعات امکان پذیر نیست';
@@ -651,7 +667,7 @@ const resolvers = {
 
     Mutation: {
         register: async (param, args) => {
-            let errorMessage;
+            let errorMessage = 'ثبت اطلاعات امکان پذیر نیست';
             try {
                 if (validator.isEmpty(args.phone)) {
                     errorMessage = 'شماره تلفن نباید خالی ارسال شود.'
@@ -787,14 +803,14 @@ const resolvers = {
                 let errorMessage = 'ذخیره برند امکان پذیر نیست'
                 try {
 
-                    const { createReadStream, filename } = await args.image;
-                    const stream = createReadStream();
-                    const { filePath } = await saveImage({ stream, filename });
+                    // const { createReadStream, filename } = await args.image;
+                    // const stream = createReadStream();
+                    // const { filePath } = await saveImage({ stream, filename });
 
-                    if (validator.isEmpty(filePath)) {
-                        errorMessage = 'تصویر را نمی توانید خالی بگذارید'
-                        throw error;
-                    }
+                    // if (validator.isEmpty(filePath)) {
+                    //     errorMessage = 'تصویر را نمی توانید خالی بگذارید'
+                    //     throw error;
+                    // }
 
                     if (validator.isEmpty(args.input.name)) {
                         errorMessage = 'نام برند را نمی توانید خالی بگذارید';
@@ -809,7 +825,7 @@ const resolvers = {
                     await Brand.create({
                         name: args.input.name,
                         category: args.input.category,
-                        image: args.input.image
+                        image: "/uploads/2023/7/brand.jpg"
                     });
 
                     return {
@@ -1110,7 +1126,6 @@ const resolvers = {
         },
 
         product: async (param, args, { check, isAdmin }) => {
-            console.log(args.input)
             if (check && isAdmin) {
                 let errorMessage = 'ذخیره محصول امکان پذیر نیست';
                 let attributes = [];
@@ -1167,10 +1182,10 @@ const resolvers = {
                     if (attributes.length == 0 || details.length == 0)
                         throw error
 
-                    console.log(args.input.original)
-                    const { createReadStream, filename } = await args.input.original;
-                    const stream = createReadStream();
-                    const { filePath } = await saveImage({ stream, filename });
+                    // console.log(args.input.original)
+                    // const { createReadStream, filename } = await args.input.original;
+                    // const stream = createReadStream();
+                    // const { filePath } = await saveImage({ stream, filename });
 
                     await Product.create({
                         persianName: args.input.persianName,
@@ -1181,7 +1196,7 @@ const resolvers = {
                         attribute: attributes,
                         details: details,
                         description: args.input.description,
-                        original: filePath
+                        original: null
                     });
 
                     return {
@@ -1531,7 +1546,7 @@ const resolvers = {
 
                     await OrderStatus.create({
                         name: args.input.name,
-                        image: "/uploads/2023/5/ors.svg",
+                        image: "/uploads/2023/7/4.svg",
                         default: args.input.default
                     });
 
@@ -1610,6 +1625,7 @@ const resolvers = {
         },
 
         comment: async (param, args, { check }) => {
+            console.log(args.input)
             if (check) {
                 let errorMessage = 'ذخیره کامنت امکان پذیر نمی باشد';
 
@@ -1841,6 +1857,7 @@ const resolvers = {
         },
 
         payment: async (param, args, { check, info }) => {
+            console.log(check)
             if (check) {
                 let errorMessage = 'امکان نهایی کردن سفارش وجود نداردُ';
                 try {
@@ -1954,6 +1971,45 @@ const resolvers = {
                     return {
                         status: 200,
                         message: ' اسلایدر  مورد نظر حذف شد'
+                    }
+
+                } catch {
+                    const error = new Error('Input Error');
+                    error.data = errorMessage;
+                    error.code = 401;
+                    throw new GraphQLError(error.data, {
+                        extensions: { code: error.code },
+                    });
+                }
+            } else {
+                const error = new Error('Input Error');
+                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
+        updateUser: async (param, args, { check, isAdmin }) => {
+            if (check) {
+                let errorMessage = 'ویرایش اطلاعات امکان پذیر نیست';
+                try {
+                    const user = await User.findById(args.input.userId);
+
+                    user.set({
+                        fname: args.input.fname,
+                        lname: args.input.lname,
+                        address: args.input.address,
+                        code: args.input.code,
+                        gender: args.input.gender,
+                    });
+
+                    await user.save();
+
+                    return {
+                        status: 200,
+                        message: ' اطلاعات مورد نظر ویرایش شد'
                     }
 
                 } catch {

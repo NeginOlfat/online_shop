@@ -31,7 +31,7 @@ public class MainActivity extends ReactActivity {
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
   }
 
-   @Override
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(null);
   }
