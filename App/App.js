@@ -3,8 +3,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
+import { NativeBaseProvider } from 'native-base';
 
-import Main from './src/screens/Main';
+import Main from './src/screens/main.screen';
+import Category from './src/screens/category.screen';
 
 const httpLink = createHttpLink({
   uri: 'http://192.168.1.105:4000/graphql',
@@ -35,11 +37,16 @@ const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Main" component={Main} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <Stack.Navigator>
+
+            <Stack.Screen name="Category" component={Category} />
+
+            <Stack.Screen name="Main" component={Main} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NativeBaseProvider>
     </ApolloProvider>
   );
 }

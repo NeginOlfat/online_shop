@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, SafeAreaView, StyleSheet } from 'react-native';
 
-import Slider from '../components/main/Slider';
-import Category from '../components/main/Category';
-import Offer from '../components/main/Offer';
-import BestSelling from '../components/main/BestSelling';
+import Slider from '../components/main/slider.component';
+import Category from '../components/main/category.component';
+import Offer from '../components/main/offer.component';
+import BestSelling from '../components/main/bestSelling.component';
 
 const Main = () => {
   return (
