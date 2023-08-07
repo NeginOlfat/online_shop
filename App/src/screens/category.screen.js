@@ -55,7 +55,7 @@ const Category = () => {
     const renderTabBar = props => {
         const inputRange = props.navigationState.routes.map((x, i) => i);
         return (
-            <Box flexDirection="row" style={{ backgroundColor: '#ff2f3f' }}>
+            <Box flexDirection="row" style={{ backgroundColor: '#ef394e' }}>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     {props.navigationState.routes.map((route, i) => {
                         const opacity = props.position.interpolate({
@@ -63,7 +63,7 @@ const Category = () => {
                             outputRange: inputRange.map(inputIndex => inputIndex === i ? 1 : 0.5)
                         });
                         const color = index === i ? '#fff' : '#eee';
-                        const borderColor = index === i ? '#fff' : '#ff3f3f';
+                        const borderColor = index === i ? '#fff' : '#ef394e';
                         return <Box key={i} borderBottomWidth="3" borderColor={borderColor} flex={1} alignItems="center" p="3" >
                             <Pressable onPress={() => {
                                 //console.log(i);
