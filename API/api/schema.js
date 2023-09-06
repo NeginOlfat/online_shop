@@ -16,7 +16,8 @@ const typeDefs = `#graphql
         getAllSlider: [Slider!]!,
         getDefaultSlider: Slider!,
         getProductInfo (input: InputGetProductInfo): ProductInfo!,
-        getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!
+        getAllProduct (page: Int, limit: Int, productId: ID): [Product!]!,
+        getCategorizedProducts (categoryId: ID): [Product!]!,
         getAllComment (input: InputGetComment): [Comment],
         getUsers (userId: ID): [User],
         getAllOrderStatus : [OrderStatus],
@@ -309,7 +310,7 @@ const typeDefs = `#graphql
         _id: ID,
         persianName: String,
         englishName: String,
-        rate: Int,
+        rate: Float,
         category: Category,
         brand: Brand,
         description: String,

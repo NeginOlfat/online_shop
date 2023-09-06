@@ -201,35 +201,25 @@ const resolvers = {
             }
         },
 
-        getAllBrand: async (param, args, { check, isAdmin }) => {
-            if (check && isAdmin) {
-                try {
-                    const page = args.input.page || 1;
-                    const limit = args.input.limit || 10;
+        getAllBrand: async (param, args) => {
+            try {
+                const page = args.input.page || 1;
+                const limit = args.input.limit || 10;
 
-                    if (args.input.getAll) {
-                        const brands = await Brand.paginate({}, { page, limit });
-                        return brands.docs;
+                if (args.input.getAll) {
+                    const brands = await Brand.paginate({}, { page, limit });
+                    return brands.docs;
 
-                    } else if (!args.input.getAll && args.input.category) {
-                        const brands = await Brand.paginate({ category: args.input.category }, { page, limit });
-                        return brands.docs;
-                    } else {
-                        throw error
-                    }
-
-                } catch {
-                    const error = new Error('Input Error');
-                    error.data = 'امکان نمایش برند ها وجود ندارد';
-                    error.code = 401;
-                    throw new GraphQLError(error.data, {
-                        extensions: { code: error.code },
-                    });
+                } else if (!args.input.getAll && args.input.category) {
+                    const brands = await Brand.paginate({ category: args.input.category }, { page, limit });
+                    return brands.docs;
+                } else {
+                    throw error
                 }
-            } else {
-                console.log(args.input)
+
+            } catch {
                 const error = new Error('Input Error');
-                error.data = 'دسترسی شما به اطلاعات مسدود شده است';
+                error.data = 'امکان نمایش برند ها وجود ندارد';
                 error.code = 401;
                 throw new GraphQLError(error.data, {
                     extensions: { code: error.code },
@@ -542,11 +532,44 @@ const resolvers = {
             }
         },
 
+        getCategorizedProducts: async (param, args) => {
+            let errorMessage = 'دسترسی به اطلاعات امکان پذیر نمی باشد'
+            try {
+                if (args.categoryId) {
+                    const category = await Category.findById(args.categoryId);
+                    if (!category) {
+                        errorMessage = 'چنین دسته بندی در سیستم ثبت نشده است'
+                        throw error
+                    }
+
+                    const products = await Product.find({ category: args.categoryId })
+                    return products;
+
+                } else if (!args.productId) {
+                    const products = await Product.find({});
+                    if (product.length == 0) {
+                        errorMessage = 'محصولی برای نمایش وجود ندارد'
+                        throw error
+                    }
+
+                    return products;
+                }
+
+            } catch {
+                const error = new Error('Input Error');
+                error.data = errorMessage;
+                error.code = 401;
+                throw new GraphQLError(error.data, {
+                    extensions: { code: error.code },
+                });
+            }
+        },
+
         getAllComment: async (param, args) => {
             try {
                 let errorMessage = 'دسترسی به اطلاعات امکان پذیر نمی باشد'
                 const page = args.page || 1;
-                const limit = args.limit || 10;
+                const limit = args.limit || 1000;
 
                 if (!args.input.productId && !args.input.commentId) {
                     const comments = await Comment.paginate({}, { page, limit });
@@ -1196,7 +1219,7 @@ const resolvers = {
                         attribute: attributes,
                         details: details,
                         description: args.input.description,
-                        original: null
+                        original: "/uploads/2023/4/mobile1.jpg"
                     });
 
                     return {

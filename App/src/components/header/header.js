@@ -1,6 +1,6 @@
 import React from 'react';
 import { HStack, StatusBar, VStack, Input, Icon } from 'native-base';
-import { StyleSheet, View, Dimensions, Pressable } from 'react-native';
+import { StyleSheet, View, Dimensions, Pressable, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Ripple from 'react-native-material-ripple';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,35 +12,51 @@ import { colors } from '../../theme/colors';
 const w = Dimensions.get('screen').width;
 
 const Header = (props) => {
-    const navigation = useNavigation();
-    return (
-        <>
-            <StatusBar bg={colors.header} barStyle="light-content" />
-            <HStack bg={colors.header} justifyContent="space-between" alignItems="center" w="100%" h="85" >
-                <View style={styles.container}>
-                    <Ripple
-                        onPress={() => navigation.openDrawer()}
-                    >
-                        <MCIcon name="menu" size={30} color="#fff" />
-                    </Ripple>
+    const navigation = useNavigation()
 
-                    <View style={styles.search}>
-                        <Pressable>
-                            <VStack w="100%" height={35} space={5} alignSelf="center"  >
-                                <Input placeholder="جستجو" height={35} width="100%" borderRadius="4" borderColor="#fff" py="1" px="2" fontSize="12"
-                                    InputLeftElement={<Icon m="2" ml="3" size="8" color="gray.400" as={<MIcon name="search" />} />}
-                                    InputRightElement={<Icon m="2" mr="3" size="8" color="gray.400" as={<MIcon name="mic" />} />} />
-                            </VStack>
-                        </Pressable>
+    if (props.route.name == 'SubCategory' || props.route.name == 'ProductsList') {
+        return (
+            <>
+                <HStack bg={colors.header} justifyContent="space-between" alignItems="center" w="100%" h="85" >
+                    <View style={styles.subHeader}>
+                        <Ripple onPress={() => navigation.goBack()}>
+                            <MIcon name="arrow-forward" size={30} color="#fff" />
+                        </Ripple>
+                        <Text style={styles.title}>{props.route.params.title}</Text>
                     </View>
+                </HStack >
+            </>
+        )
+    } else {
+        return (
+            <>
+                <StatusBar bg={colors.header} barStyle="light-content" />
+                <HStack bg={colors.header} justifyContent="space-between" alignItems="center" w="100%" h="85" >
+                    <View style={styles.container}>
+                        <Ripple
+                            onPress={() => navigation.openDrawer()}
+                        >
+                            <MCIcon name="menu" size={30} color="#fff" />
+                        </Ripple>
 
-                    <Ripple>
-                        <MCIcon name="cart" size={30} color="#fff" />
-                    </Ripple>
-                </View>
-            </HStack >
-        </>
-    )
+                        <View style={styles.search}>
+                            <Pressable>
+                                <VStack w="100%" height={35} space={5} alignSelf="center"  >
+                                    <Input placeholder="جستجو" height={35} width="100%" borderRadius="4" borderColor="#fff" py="1" px="2" fontSize="12"
+                                        InputLeftElement={<Icon m="2" ml="3" size="8" color="gray.400" as={<MIcon name="search" />} />}
+                                        InputRightElement={<Icon m="2" mr="3" size="8" color="gray.400" as={<MIcon name="mic" />} />} />
+                                </VStack>
+                            </Pressable>
+                        </View>
+
+                        <Ripple>
+                            <MCIcon name="cart" size={30} color="#fff" />
+                        </Ripple>
+                    </View>
+                </HStack >
+            </>
+        )
+    }
 }
 
 const styles = StyleSheet.create({
@@ -58,6 +74,17 @@ const styles = StyleSheet.create({
         marginTop: -3,
         marginHorizontal: 15,
         backgroundColor: '#fff'
+    },
+    subHeader: {
+        flex: 1,
+        flexDirection: 'row-reverse',
+        width: '100%',
+        paddingHorizontal: 10,
+    },
+    title: {
+        fontSize: 20,
+        color: '#fff',
+        marginRight: 20
     }
 })
 export default React.memo(Header)

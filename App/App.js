@@ -10,6 +10,10 @@ import Main from './src/screens/main.screen';
 import Category from './src/screens/category.screen';
 import Headers from './src/components/header/header';
 import DrawerContent from './src/components/drawer/DrawerContent';
+import SubCategory from './src/screens/subCategory.screen';
+import ProductsList from './src/screens/productsList.screen';
+import Product from './src/screens/product.screen';
+
 
 const httpLink = createHttpLink({
   uri: 'http://192.168.1.105:4000/graphql',
@@ -50,6 +54,7 @@ const DrawerMenu = () => {
     >
       <Drawer.Screen name="Main" component={Main} options={{ title: "خانه" }} />
       <Drawer.Screen name="Category" component={Category} options={{ title: "دسته بندی" }} />
+
     </Drawer.Navigator>
   );
 }
@@ -61,10 +66,13 @@ const App = () => {
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              headerShown: false
+              header: (props) => <Headers {...props} />,
             }}
           >
-            <Stack.Screen name="DrawerMenu" component={DrawerMenu} />
+            <Stack.Screen name="DrawerMenu" component={DrawerMenu} options={{ headerShown: false }} />
+            <Drawer.Screen name="SubCategory" component={SubCategory} />
+            <Drawer.Screen name="ProductsList" component={ProductsList} />
+            <Drawer.Screen name="Product" component={Product} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>

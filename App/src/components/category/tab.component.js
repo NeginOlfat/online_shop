@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity, View, Image, FlatList, Dimensions } from 'react-native';
 import { gql, useQuery } from '@apollo/client';
+import { useNavigation } from '@react-navigation/native';
 
 import images from '../../../assets/mock/images';
 
@@ -32,7 +33,8 @@ const TabComponent = (props) => {
         }
     }
 
-    const { loading, error, data } = useQuery(QUERY, VARIABLES)
+    const { loading, error, data } = useQuery(QUERY, VARIABLES);
+    const navigation = useNavigation();
 
     if (loading) return null;
     if (error) return `Error! ${error}`;
@@ -42,7 +44,9 @@ const TabComponent = (props) => {
             <FlatList
                 data={data.getAllCategory}
                 renderItem={({ item }) => (
-                    <TouchableOpacity key={item._id} style={styles.btn}>
+                    <TouchableOpacity key={item._id} style={styles.btn}
+                        onPress={() => navigation.navigate('SubCategory', { categoryId: item._id, title: item.name })}
+                    >
                         <Image style={styles.img} source={images[item.image._id]} />
                         <Text style={styles.txt}>{item.name}</Text>
                     </TouchableOpacity>

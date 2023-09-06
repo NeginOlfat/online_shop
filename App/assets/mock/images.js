@@ -13,12 +13,28 @@ const images = {
     "64a401c99e20491c418a2eb0": require('./uploads/2023/7/sm.jpg'),
     "64a401d39e20491c418a2eb1": require('./uploads/2023/7/fre.jpg'),
     "64a401e69e20491c418a2eb2": require('./uploads/2023/7/eap.jpg'),
-    "64a413829e20491c418a2ebe": require('./uploads/2023/7/brand.jpg'),
+    "/uploads/2023/7/brand.jpg": require('./uploads/2023/7/brand.jpg'),
+    "64bf344dfdd88e5b38435ed3": require('./uploads/2023/7/mod.jpg'),
     "64a8c3626a3c196ba6a18e8f": require('./uploads/2023/7/1.svg'),
     "64a8c36e6a3c196ba6a18e90": require('./uploads/2023/7/2.svg'),
     "64a8c3776a3c196ba6a18e91": require('./uploads/2023/7/3.svg'),
     "64a8c3836a3c196ba6a18e92": require('./uploads/2023/7/4.svg'),
-    "64bf344dfdd88e5b38435ed3": require('./uploads/2023/7/mod.jpg')
+
+    "/uploads/2023/7/mod.jpg": require('./uploads/2023/7/mod.jpg'),
+    "/uploads/2023/2/download.jpg": require('./uploads/2023/2/download.jpg'),
+    "/uploads/2023/4/mobile1.jpg": require('./uploads/2023/4/mobile1.jpg'),
+    "/uploads/2023/5/ors.svg": require('./uploads/2023/5/ors.svg'),
+    "/uploads/2023/7/beauty.jpg": require('./uploads/2023/7/beauty.jpg'),
+    "/uploads/2023/7/book.jpg": require('./uploads/2023/7/book.jpg'),
+    "/uploads/2023/7/digital.jpg": require('./uploads/2023/7/digital.jpg'),
+    "/uploads/2023/7/home.jpg": require('./uploads/2023/7/home.jpg'),
+    "/uploads/2023/7/sptr.jpg": require('./uploads/2023/7/sptr.jpg'),
+    "/uploads/2023/7/perfume.jpg": require('./uploads/2023/7/perfume.jpg'),
+    "/uploads/2023/7/books.jpg": require('./uploads/2023/7/books.jpg'),
+    "/uploads/2023/7/furn.jpg": require('./uploads/2023/7/furn.jpg'),
+    "/uploads/2023/7/sm.jpg": require('./uploads/2023/7/sm.jpg'),
+    "/uploads/2023/7/fre.jpg": require('./uploads/2023/7/fre.jpg'),
+    "/uploads/2023/7/eap.jpg": require('./uploads/2023/7/eap.jpg'),
 }
 
 export default images;
