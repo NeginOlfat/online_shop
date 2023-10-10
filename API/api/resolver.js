@@ -88,7 +88,7 @@ const resolvers = {
     Query: {
         user: (param, args, { check }) => {
             if (check) {
-                return "Negin Olfat"
+                return 'checked'
             } else {
                 const error = new Error('Input Error');
                 error.data = 'دسترسی شما به اطلاعات  مسدود شده است';
@@ -100,7 +100,7 @@ const resolvers = {
         },
 
         login: async (param, args, { secretId }) => {
-            let errorMessage;
+            let errorMessage = 'ورود امکان پذیر نیست';
             try {
                 const user = await User.findOne({ phone: args.phone });
                 if (!user) {
@@ -113,9 +113,12 @@ const resolvers = {
                     errorMessage = 'کلمه عبور وارد شده اشتباه است';
                     throw error;
                 }
-                console.log(secretId)
+                console.log(user)
                 return {
-                    token: await User.CreateToken(user.id, secretId, '8h')
+                    token: await User.CreateToken(user._id, secretId, '8h'),
+                    userId: user._id,
+                    fname: user.fname,
+                    lname: user.lname
                 }
 
             } catch {
@@ -726,7 +729,7 @@ const resolvers = {
 
                 return {
                     status: 200,
-                    message: 'اطلاعات شما در سیستم ثبت شد'
+                    message: 'اطلاعات شما در سیستم ثبت شد',
                 }
             } catch {
                 const error = new Error('Input Error');
@@ -1649,6 +1652,7 @@ const resolvers = {
 
         comment: async (param, args, { check }) => {
             console.log(args.input)
+            console.log(check)
             if (check) {
                 let errorMessage = 'ذخیره کامنت امکان پذیر نمی باشد';
 

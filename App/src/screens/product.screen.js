@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, StyleSheet, FlatList, TouchableOpacity, View, Image, ScrollView } from 'react-native';
+import { Text, StyleSheet, View, ScrollView } from 'react-native';
 import { Divider } from 'native-base';
 
 import ProductCard from '../components/products/productCard.component';
@@ -7,13 +7,14 @@ import Seller from '../components/products/seller.component';
 import Specifications from '../components/products/specifications.component';
 import Introduction from '../components/products/introduction.component';
 import Rating from '../components/products/rating.component';
+import Comments from '../components/products/comments.component';
 
 
 const Product = (props) => {
 
     const { product } = props.route.params;
     const [currentAttribute, setCurrentAttribute] = useState(product.attribute[0]);
-    //  console.log(product.category.parent._id)
+
     return (
         <ScrollView>
             <ProductCard
@@ -39,6 +40,7 @@ const Product = (props) => {
             <Specifications specs={product.details} />
             <Introduction description={product.description} />
             <Rating category={product.category.parent._id} productId={product._id} />
+            <Comments productId={product._id} />
         </ScrollView>
     )
 

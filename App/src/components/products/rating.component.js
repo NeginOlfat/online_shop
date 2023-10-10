@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View, LayoutAnimation } from 'react-native';
+import React from 'react';
+import { Text, StyleSheet, View } from 'react-native';
 import Stars from 'react-native-stars';
 import { gql, useQuery } from '@apollo/client';
+import { useDispatch } from 'react-redux';
+
+import { addSurvey } from '../../redux/survey.slice';
 
 
 const surveyValue = (value, addvalue) => {
@@ -37,6 +40,7 @@ const productSurvey = (survey, comment) => {
 const Rating = (props) => {
 
     const { category, productId } = props;
+    const dispatch = useDispatch();
 
     const SURVEY_QUERY = gql`
     query getAllSurvey($categoryId:ID!) {
@@ -84,6 +88,7 @@ const Rating = (props) => {
     if (surveyError || commentError) return `Error! ${error}`;
 
     if (!commentLoading && !surveyLoading) {
+        dispatch(addSurvey(surveyData.getAllSurvey))
         surveyList = productSurvey(surveyData.getAllSurvey, commentData.getAllComment);
         surveyList.map(item => ratingValue += item.value);
         ratingValue = Math.round((ratingValue / surveyList.length) * 10) / 10;
@@ -139,7 +144,7 @@ const styles = StyleSheet.create({
     container: {
         width: '100%',
         height: null,
-        marginBottom: 100,
+        marginBottom: 10,
         backgroundColor: '#fff',
         elevation: 5,
     },

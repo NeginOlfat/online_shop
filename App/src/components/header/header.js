@@ -14,7 +14,7 @@ const w = Dimensions.get('screen').width;
 const Header = (props) => {
     const navigation = useNavigation()
 
-    if (props.route.name == 'SubCategory' || props.route.name == 'ProductsList') {
+    if (props.route.name == 'SubCategory' || props.route.name == 'ProductsList' || props.route.name == 'Comments') {
         return (
             <>
                 <HStack bg={colors.header} justifyContent="space-between" alignItems="center" w="100%" h="85" >
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         justifyContent: 'space-between',
         width: '100%',
-        backgrroundColor: colors.header,
+        backgroundColor: colors.header,
         paddingHorizontal: 10,
     },
     search: {

@@ -231,7 +231,10 @@ const typeDefs = `#graphql
         _id: ID,
         status: Int,
         message: String,
-        token: String
+        token: String,
+        fname: String,
+        lname: String,
+        userId: ID,
     }
 
     type Multimedia {
