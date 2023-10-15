@@ -32,6 +32,7 @@
     "react-native-screens": "^3.22.1",
     "react-native-star-rating-widget": "^1.7.2",
     "react-native-stars": "^1.2.2",
+    "react-native-svg": "^13.14.0",
     "react-native-swiper": "^1.6.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.0.0",

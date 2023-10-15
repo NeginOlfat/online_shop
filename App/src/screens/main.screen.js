@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, SafeAreaView, StyleSheet } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { gql, useLazyQuery } from '@apollo/client';
 
 import { login as userLogin, reset } from '../redux/userInfo.slice';
+import { selectUserInfo } from '../redux/userInfo.slice';
 import Slider from '../components/main/slider.component';
 import Category from '../components/main/category.component';
 import Offer from '../components/main/offer.component';
@@ -14,6 +15,7 @@ import { getData } from '../utils/storage';
 const Main = () => {
 
   const dispatch = useDispatch()
+  const infoState = useSelector(selectUserInfo);
 
   const QUERY = gql`
   query User {
@@ -24,24 +26,26 @@ const Main = () => {
 
   useEffect(() => {
     getData('USERINFO').then((info) => {
-      console.log(info)
-      onCheck(
-        {
-          context: {
-            headers: {
-              token: info.token
+      if (!infoState || infoState.token != info.token) {
+        onCheck(
+          {
+            context: {
+              headers: {
+                token: info.token
+              }
             }
-          }
-        })
-      if (data && !loading) {
-        console.log('get')
-        dispatch(userLogin(info))
-      } else if (error && !loading) {
-        console.log('reset')
-        dispatch(reset())
+          })
+        if (data && !loading) {
+          console.log('get')
+          dispatch(userLogin(info))
+        } else if (error && !loading) {
+          console.log('reset')
+          dispatch(reset())
+        }
       }
     }).catch((e) => console.log(e))
-  }, [])
+  })
+
 
   return (
     <SafeAreaView style={styles.container}>
