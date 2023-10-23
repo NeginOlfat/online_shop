@@ -3,6 +3,7 @@ import { Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions, View
 import { useNavigation } from '@react-navigation/native';
 import { gql, useQuery } from '@apollo/client';
 import { useSelector } from 'react-redux';
+import LoadingView from '../components/animation/loadingView.component';
 
 import { selectUserInfo } from '../redux/userInfo.slice';
 import CommentInfo from '../components/comment/commentInfo.component';
@@ -79,7 +80,7 @@ const Comments = (props) => {
         return Object.values(obj).length === 0 && obj.constructor === Object;
     }
 
-    if (loading) return null
+    if (loading) return <LoadingView />
 
     if (errors) console.log(errors)
 

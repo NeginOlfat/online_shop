@@ -2018,12 +2018,11 @@ const resolvers = {
             }
         },
 
-        updateUser: async (param, args, { check, isAdmin }) => {
+        updateUser: async (param, args, { check }) => {
             if (check) {
                 let errorMessage = 'ویرایش اطلاعات امکان پذیر نیست';
                 try {
                     const user = await User.findById(args.input.userId);
-
                     user.set({
                         fname: args.input.fname,
                         lname: args.input.lname,

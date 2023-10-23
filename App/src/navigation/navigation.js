@@ -14,6 +14,7 @@ import Comments from '../screens/comments.screen';
 import Login from '../screens/login.screen';
 import SignUp from '../screens/signUp.screen';
 import InfoCompletion from '../screens/infoCompletion.screen';
+import Cart from '../screens/cart.screen';
 
 
 const Stack = createStackNavigator();
@@ -53,6 +54,7 @@ const Navigation = () => {
                 <Drawer.Screen name="Comments" component={Comments} />
                 <Drawer.Screen name="Login" component={Login} options={{ headerShown: false }} />
                 <Drawer.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+                <Drawer.Screen name="Cart" component={Cart} />
             </Stack.Navigator>
         </NavigationContainer>
     );

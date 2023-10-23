@@ -18,6 +18,7 @@ const surveyValue = (value, addvalue) => {
 }
 
 const productSurvey = (survey, comment) => {
+    console.log(comment)
     let surveyList = survey.map(item => (
         {
             id: item._id,
@@ -25,15 +26,16 @@ const productSurvey = (survey, comment) => {
             value: 0
         }
     ))
-    surveyList.map((item) => {
-        for (let i = 0; i < 2; i++) {
-            for (let j = 0; j < 4; j++) {
-                if (item.name == comment[i].survey[j].survey.name) {
-                    item.value = surveyValue(item.value, comment[i].survey[j].value)
+    if (comment.length != 0)
+        surveyList.map((item) => {
+            for (let i = 0; i < 2; i++) {
+                for (let j = 0; j < 4; j++) {
+                    if (item.name == comment[i].survey[j].survey.name) {
+                        item.value = surveyValue(item.value, comment[i].survey[j].value)
+                    }
                 }
             }
-        }
-    })
+        })
     return surveyList
 }
 
@@ -87,7 +89,8 @@ const Rating = (props) => {
     if (commentLoading || surveyLoading) return null;
     if (surveyError || commentError) return `Error! ${error}`;
 
-    if (!commentLoading && !surveyLoading) {
+    if (!commentLoading && !surveyLoading && commentData && surveyData) {
+        console.log(surveyData)
         dispatch(addSurvey(surveyData.getAllSurvey))
         surveyList = productSurvey(surveyData.getAllSurvey, commentData.getAllComment);
         surveyList.map(item => ratingValue += item.value);

@@ -5,7 +5,10 @@ import { Provider } from 'react-redux';
 
 import Navigation from './src/navigation/navigation';
 import store from './src/redux/store';
+import { LogBox } from 'react-native';
 
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 const App = () => {
 

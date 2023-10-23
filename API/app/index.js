@@ -3,6 +3,7 @@ const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const { ApolloServerPluginLandingPageGraphQLPlayground } = require('@apollo/server-plugin-landing-page-graphql-playground')
 
 const User = require('../app/models/users');
 const typeDefs = require('../api/schema');
@@ -25,6 +26,7 @@ module.exports = class Application {
       uploads: false,
       playground: true,
       csrfPrevention: false,
+      plugins: [ApolloServerPluginLandingPageGraphQLPlayground()],
       formatError(err) {
         const data = err.extensions.data;
         const code = err.extensions.code || 500;
@@ -40,6 +42,7 @@ module.exports = class Application {
         const secretId = config.secretId;
         const check = await User.CheckToken(req, secretId);
         let isAdmin = false;
+        console.log(check)
         let info;
         if (check) {
           isAdmin = await User.findById(check.id);

@@ -3,6 +3,7 @@ import { ScrollView, SafeAreaView, StyleSheet } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { gql, useLazyQuery } from '@apollo/client';
 
+
 import { login as userLogin, reset } from '../redux/userInfo.slice';
 import { selectUserInfo } from '../redux/userInfo.slice';
 import Slider from '../components/main/slider.component';
@@ -10,6 +11,7 @@ import Category from '../components/main/category.component';
 import Offer from '../components/main/offer.component';
 import BestSelling from '../components/main/bestSelling.component';
 import { getData } from '../utils/storage';
+import LoadingView from '../components/animation/loadingView.component';
 
 
 const Main = () => {
@@ -38,14 +40,15 @@ const Main = () => {
         if (data && !loading) {
           console.log('get')
           dispatch(userLogin(info))
-        } else if (error && !loading) {
+        } else if (error && !loading && infoState.token != '') {
           console.log('reset')
           dispatch(reset())
         }
       }
     }).catch((e) => console.log(e))
-  })
+  }, [])
 
+  if (loading) return <LoadingView />
 
   return (
     <SafeAreaView style={styles.container}>

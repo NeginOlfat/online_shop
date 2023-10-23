@@ -1,21 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, View, Pressable } from 'react-native';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-
-const persianColorName = (clr) => {
-    switch (clr) {
-        case 'blue':
-            return 'آبی'
-        case 'red':
-            return 'قرمز'
-        case 'black':
-            return 'مشکی'
-
-        default:
-            return 'سفید'
-    }
-}
+import { persianColorName } from '../../utils/persianColor';
 
 const ColorButton = (props) => {
     const { color, isSelected, onColorSelect } = props

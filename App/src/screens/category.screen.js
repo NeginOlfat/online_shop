@@ -5,6 +5,7 @@ import { Box, Text, Center, useColorModeValue, ScrollView } from 'native-base';
 import { gql, useQuery } from '@apollo/client';
 
 import TabComponent from '../components/category/tab.component';
+import LoadingView from '../components/animation/loadingView.component';
 
 const QUERY = gql`
 query getAllCategory($page: Int, $limit: Int,$mainCategory:Boolean, $parentCategory: Boolean, $catId:ID ) {
@@ -36,6 +37,8 @@ const Category = () => {
 
     let renderScene;
     let routes;
+
+    if (loading) return <LoadingView />
 
     if (!loading) {
         let tmpRoutes = []
@@ -81,7 +84,6 @@ const Category = () => {
         );
     };
 
-    if (loading) return null;
     if (error) return `Error! ${error}`;
 
     return (

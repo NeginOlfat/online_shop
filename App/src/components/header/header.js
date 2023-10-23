@@ -14,7 +14,9 @@ const w = Dimensions.get('screen').width;
 const Header = (props) => {
     const navigation = useNavigation()
 
-    if (props.route.name == 'SubCategory' || props.route.name == 'ProductsList' || props.route.name == 'Comments') {
+    if (props.route.name == 'SubCategory' || props.route.name == 'ProductsList' ||
+        props.route.name == 'Comments' || props.route.name == 'Cart'
+    ) {
         return (
             <>
                 <HStack bg={colors.header} justifyContent="space-between" alignItems="center" w="100%" h="85" >
@@ -49,11 +51,11 @@ const Header = (props) => {
                             </Pressable>
                         </View>
 
-                        <Ripple>
+                        <Ripple onPress={() => navigation.navigate('Cart', { title: 'سبد خرید' })}>
                             <MCIcon name="cart" size={30} color="#fff" />
                         </Ripple>
                     </View>
-                </HStack >
+                </HStack>
             </>
         )
     }

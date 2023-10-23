@@ -19,6 +19,7 @@ const ProductCard = (props) => {
 
     const onColorSelect = (index) => {
         setSelectedIndx(index)
+        props.setCurrentAttribute(props.attribute[index])
     }
 
     return (
@@ -31,7 +32,7 @@ const ProductCard = (props) => {
                     <TouchableOpacity>
                         <MCIcon name="cards-heart-outline" size={25} color="#8f8f8f" />
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Cart', { title: 'سبد خرید' })}>
                         <MCIcon name="cart" size={25} color="#8f8f8f" />
                     </TouchableOpacity>
                 </View>
@@ -56,7 +57,7 @@ const ProductCard = (props) => {
                         ))
                     }
 
-                </Swiper >
+                </Swiper>
             </View>
             <View style={styles.txtBox}>
                 <Text style={styles.pname}>{props.pname}</Text>

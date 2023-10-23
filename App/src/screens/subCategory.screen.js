@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import images from '../../assets/mock/images';
 import SpecialSale from '../components/category/specialSale.component';
+import LoadingView from '../components/animation/loadingView.component';
 
 
 const SubCategory = (props) => {
@@ -57,7 +58,7 @@ const SubCategory = (props) => {
 
   const navigation = useNavigation();
 
-  if (categoryLoading || brandLoading) return null;
+  if (categoryLoading || brandLoading) return <LoadingView />
   if (categoryError || brandError) return `Error! ${error}`;
 
   return (

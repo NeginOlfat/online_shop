@@ -7,6 +7,7 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import { gql, useLazyQuery } from '@apollo/client';
 import { useDispatch, useSelector } from 'react-redux';
 
+import LoadingView from '../components/animation/loadingView.component';
 import { login as userLogin, selectUserInfo } from '../redux/userInfo.slice';
 import { showToast } from '../utils/toastShow';
 import { storeData } from '../utils/storage';
@@ -56,10 +57,10 @@ const Login = (props) => {
             setErrorMessage('کلمه عبور حداقل باید 8 کاراکتر باشد')
         } else {
             onLogin(VARIABLES);
-            if (loading) setErrorMessage('...')
-
         }
     }
+
+    // if (loading) return <LoadingView />
 
     if (error && !loading) {
         if (errorMessage != error.graphQLErrors[0].message) {

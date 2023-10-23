@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { gql, useQuery } from '@apollo/client';
 
 import images from '../../assets/mock/images';
-
+import LoadingView from '../components/animation/loadingView.component';
 
 const ProductsList = (props) => {
 
@@ -45,6 +45,7 @@ const ProductsList = (props) => {
               _id,
               name
             },
+            _id,
             color,
             stock,
             price,
@@ -80,7 +81,7 @@ const ProductsList = (props) => {
         return minPrice;
     }
 
-    if (loading) return null;
+    if (loading) return <LoadingView />
     if (error) return `Error! ${error}`;
 
     return (

@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import { gql, useLazyQuery, useMutation } from '@apollo/client';
 import { useSelector } from 'react-redux';
 
+import LoadingView from '../components/animation/loadingView.component';
 import { selectUserInfo } from '../redux/userInfo.slice';
 import { showToast } from '../utils/toastShow';
 import { ScrollView } from 'react-native';
@@ -112,7 +113,7 @@ const InfoCompletion = () => {
 
     if (error && !loading) console.log(error)
 
-    if (loading) return null
+    if (loading) return <LoadingView />
 
     const registerInfo = () => {
         if (fname.length == 0) {
